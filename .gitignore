@@ -1,22 +1,24 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
-
-/.quarto/
-
-**/*.quarto_ipynb
-
 # macOS
 .DS_Store
 
-# Python virtual environment
+# Python
 .venv/
 venv/
 __pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
 
-# Quarto build output (deploy_dashboard.sh copies it into docs/, which GitHub Pages serves)
-/_site/
+# Django
+/staticfiles/
+/media/
+*.sqlite3
+.env
 
-# Full MapAgora datasets downloaded by get_full_data.sh (large)
+# Large data fetched by get_full_data.sh (MapAgora, Harvard Dataverse)
 /raw_data/mapagora_full/
+# Census boundary files cached by scripts
+/raw_data/geo/
+
+# Generated analysis outputs (re-create with scripts/)
+/outputs/
