@@ -4,3 +4,19 @@
 .Ruserdata
 
 /.quarto/
+
+**/*.quarto_ipynb
+
+# macOS
+.DS_Store
+
+# Python virtual environment
+.venv/
+venv/
+__pycache__/
+
+# Quarto build output (CI renders _site/ fresh; docs/ is the committed deploy copy)
+/_site/
+
+# Full MapAgora datasets downloaded by get_full_data.sh (large)
+/raw_data/mapagora_full/

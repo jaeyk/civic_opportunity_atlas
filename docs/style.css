@@ -1,0 +1,441 @@
+/* Layout */
+.layout-wrapper {
+    display: flex;
+    height: calc(100vh - 56px);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* Details Panel */
+.details-panel {
+    flex: 1;
+    padding: 20px;
+    border-right: 2px solid #ccc;
+    overflow-y: auto;
+    min-width: 300px;
+    max-width: 400px;
+    background: white;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+/* Map Panel */
+.map-panel {
+    flex: 2;
+    position: relative;
+    overflow: hidden;
+}
+
+#map-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+/* Error Messages */
+.error-message {
+    padding: 1rem;
+    background-color: #fee;
+    border: 1px solid #fcc;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
+
+/* County Details Styling */
+#county-details h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+#county-details hr {
+    border: 0;
+    height: 1px;
+    background: #ddd;
+    margin: 1rem 0;
+}
+
+#county-details h4 {
+    color: #666;
+    margin: 1rem 0 0.5rem;
+}
+
+#county-details p {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .layout-wrapper {
+        flex-direction: column;
+    }
+    
+    .details-panel {
+        max-width: 100%;
+        border-right: none;
+        border-bottom: 2px solid #ccc;
+    }
+}
+
+/* Map Controls */
+.leaflet-control-layers {
+    background: white;
+    padding: 6px 8px;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+}
+
+.leaflet-control-layers label {
+    margin-bottom: 5px;
+}
+
+/* Loading State */
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ===== COMPARISON MODE STYLES ===== */
+
+/* Comparison toggle button */
+.comparison-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.comparison-toggle:hover {
+    background: #e9ecef;
+}
+
+.comparison-toggle.active {
+    background: #4CAF50;
+    border-color: #4CAF50;
+    color: white;
+}
+
+.comparison-toggle .toggle-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 2px solid currentColor;
+}
+
+.comparison-toggle.active .toggle-indicator {
+    background: white;
+}
+
+/* Selected county highlight on map */
+.county-selected {
+    stroke: #ff6b6b !important;
+    stroke-width: 3px !important;
+    stroke-dasharray: none !important;
+}
+
+/* Comparison sidebar */
+.comparison-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+}
+
+.comparison-panel {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1em;
+    background: #fafafa;
+}
+
+.comparison-panel h4 {
+    margin: 0 0 0.5em 0;
+    padding-bottom: 0.5em;
+    border-bottom: 2px solid #4CAF50;
+    font-size: 14px;
+}
+
+.comparison-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+    padding: 0.5em;
+    background: #e9ecef;
+    border-radius: 4px;
+}
+
+.comparison-counter {
+    font-size: 14px;
+    color: #666;
+}
+
+.clear-comparison-btn {
+    padding: 4px 12px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.clear-comparison-btn:hover {
+    background: #c82333;
+}
+
+/* ===== ANNOTATION PANEL STYLES ===== */
+
+.annotation-panel {
+    margin-top: 1.5em;
+    padding: 1em;
+    background: #f5f5f5;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.annotation-panel h5 {
+    margin: 0 0 0.75em 0;
+    font-size: 14px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.annotation-panel h5::before {
+    content: "\270E";
+    font-size: 16px;
+}
+
+.annotation-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+    margin-bottom: 0.75em;
+}
+
+.annotation-textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.annotation-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.annotation-save-btn {
+    flex: 1;
+    padding: 8px 16px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.annotation-save-btn:hover {
+    background: #43a047;
+}
+
+.annotation-delete-btn {
+    padding: 8px 16px;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.annotation-delete-btn:hover {
+    background: #d32f2f;
+}
+
+.annotation-saved-indicator {
+    display: none;
+    color: #4CAF50;
+    font-size: 12px;
+    margin-top: 0.5em;
+}
+
+.annotation-saved-indicator.show {
+    display: block;
+}
+
+/* Annotated county indicator on map */
+.annotated-county {
+    border-left: 4px solid #ffd700 !important;
+}
+
+/* ===== TABLE BOOKMARK STYLES ===== */
+
+.bookmarked-row {
+    background: #fff8e1 !important;
+}
+
+.bookmark-btn {
+    cursor: pointer;
+    font-size: 18px;
+    color: #ccc;
+    transition: color 0.2s ease;
+    background: none;
+    border: none;
+    padding: 2px 6px;
+}
+
+.bookmark-btn:hover {
+    color: #ffc107;
+}
+
+.bookmark-btn.active {
+    color: #ffc107;
+}
+
+.bookmark-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 1em;
+}
+
+.bookmark-filter input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+/* Table notes column */
+.table-note-cell {
+    position: relative;
+}
+
+.table-note-indicator {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: #ffeb3b;
+    border-radius: 50%;
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.table-note-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    max-width: 200px;
+    white-space: normal;
+    z-index: 1000;
+    display: none;
+}
+
+.table-note-cell:hover .table-note-tooltip {
+    display: block;
+}
+
+/* ===== COMPARE PAGE STYLES ===== */
+
+.compare-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5em;
+    margin-top: 1em;
+}
+
+.compare-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.compare-card h3 {
+    margin: 0 0 1em 0;
+    padding-bottom: 0.5em;
+    border-bottom: 2px solid #4CAF50;
+}
+
+.compare-metric {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5em 0;
+    border-bottom: 1px solid #eee;
+}
+
+.compare-metric:last-child {
+    border-bottom: none;
+}
+
+.compare-metric .label {
+    color: #666;
+    font-size: 14px;
+}
+
+.compare-metric .value {
+    font-weight: bold;
+    color: #333;
+}
+
+.state-selector {
+    padding: 0.5em 1em;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    min-width: 200px;
+}
+
+.state-selector:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
+@media (max-width: 768px) {
+    .comparison-sidebar {
+        flex-direction: column;
+    }
+
+    .compare-container {
+        grid-template-columns: 1fr;
+    }
+
+    .annotation-panel {
+        margin-top: 1em;
+    }
+}
