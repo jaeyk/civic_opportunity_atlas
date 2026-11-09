@@ -21,7 +21,7 @@ bash deploy_dashboard.sh
 quarto preview
 ```
 
-Automated deployment runs via GitHub Actions on push to main.
+Deployment is manual: GitHub Pages serves the committed `docs/` folder on `main`. There is no GitHub Actions workflow; run `deploy_dashboard.sh` to publish.
 
 ## R Package Dependencies
 

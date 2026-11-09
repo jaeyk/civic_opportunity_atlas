@@ -22,6 +22,7 @@ mkdir -p $DOCS_DIR
 # Move the rendered files from _site to docs/
 echo "Copying rendered files to 'docs' folder..."
 cp -r $SITE_DIR/* $DOCS_DIR/
+touch $DOCS_DIR/.nojekyll  # serve files as-is, skip Jekyll
 
 # Add the changes to git
 echo "Adding changes to Git..."
