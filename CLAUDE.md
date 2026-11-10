@@ -4,15 +4,23 @@ Guidance for Claude Code when working in this repository.
 
 ## Project direction
 
-A static web tool where community members (1) learn the structure of civic opportunity in their county and ZIP code (what kinds of opportunity exist, to what extent, and provided by what kinds of organizations), (2) suggest and vote on the engagement opportunities their community needs, and (3) share strategies across communities. Built on the MapAgora datasets (SNF Agora Institute, Johns Hopkins).
+A static web tool where community members, organizers and foundations (1) learn the structure of civic opportunity in their county and ZIP code (what kinds of opportunity exist, to what extent, and provided by what kinds of organizations), (2) vote on which kinds of opportunity their community needs, and (3) find strategies that worked in similar places. Built on the MapAgora datasets (SNF Agora Institute, Johns Hopkins).
+
+**No moderator role (user decision): the public never submits free text.** No posts, comments, user-written strategies or user-added listings. Anything that would need moderation is out of scope.
+
+Planned features:
+- Place profiles (county, ZIP): what kinds of opportunity exist, how much, by which organization types, vs. 10 peer places.
+- Needs voting from a fixed list of categories (opportunity × organization type), anonymous, one vote per person per choice; results shown next to the data ("requests vs. what exists").
+- Gap finder: places below their peers on a given opportunity/type; filters; CSV export.
+- "Present but inactive" organization types (organizations present but offering nothing).
+- Service-area profiles: a set of ZIPs/counties combined; the selection lives in the URL.
+- Printable one-page brief per place; embeddable profile widget.
+- Curated strategy library: written by the team as files in the repo, tagged by place context, surfaced as "worked in places like yours".
 
 - **Language:** Python for the data pipeline and site build. Don't add R.
 - **Hosting:** GitHub Pages, which serves static files only, so no Django or other server. Python builds static pages and JSON; the browser handles interactivity.
-- **Writes (suggestions, votes, strategies):** Firebase on the free Spark plan, called from the browser: Firestore + Firebase Auth (Anonymous for users, Google for the moderator) + App Check with reCAPTCHA. Cloud Functions are not available on Spark, so all integrity lives in `firestore.rules`. Votes use doc ID `{postId}_{uid}`, and rules require the post's score to change by exactly the vote delta in the same batch (`getAfter()`). Watch the read quota (50k reads/day): paginate and cache.
-- **Community model: Reddit-style and pseudonymous.** Users get an auto-generated handle through anonymous sign-in; no real names; email is optional (only to keep a handle across devices). Each county and ZIP has a board next to its data profile. Posts are "We need…" (suggestions) or "This worked…" (strategies), with up/down votes, comments, and Hot/Top/New sorting. Strategies can be cross-posted between boards. One vote per handle per post, enforced in the database. Publish scores only, never who voted.
-- **Pre-moderation (hate-speech filtering):** every post and comment is inserted as `pending`, enforced by Firestore security rules (create only with `status == 'pending'`), not just in the UI. The public sees only `approved` (queries must filter on status, because rules aren't filters); authors see their own pending/denied items. Only users with a doc in the `moderators` collection can change status, and the project owner (Jae Yeon Kim, signed in with Google, not anonymously) is the sole moderator for now. A moderator-only queue page offers Approve / Deny with an optional reason. Moderation is manual only; no automatic hate-speech classifier (user decision). Handles are auto-generated only. Votes are not moderated and count only on approved posts.
-- **Abuse mitigation:** a human-check challenge before a new handle is created, rate limits, separate display of votes from new handles, a report button.
-- **Data use:** community contributions are NOT used for research, so no IRB is needed. Ship a short plain-language privacy note.
+- **Votes only:** Firebase on the free Spark plan, called from the browser: Firestore + Firebase Anonymous Auth + App Check (reCAPTCHA). No handles, no accounts with names or emails. Cloud Functions are not available on Spark, so integrity lives in `firestore.rules`: a vote doc ID is `{placeId}_{categoryId}_{uid}`, a category must be on the fixed list, and the tally doc must change by exactly the vote in the same batch (`getAfter()`). Publish tallies only, never who voted. Watch the read quota (50k reads/day): read tally docs, not individual votes, and cache.
+- **Data use:** votes are NOT used for research, so no IRB is needed. Ship a short plain-language privacy note.
 - The old Quarto/R dashboard and Flask prototype live on the `archive/quarto-dashboard` branch (tag `quarto-dashboard-final`). Mine them for logic, but don't restore them to main.
 
 ## Commands
