@@ -20,7 +20,7 @@ Four primary audiences: **foundations** (where/how to invest), **universities** 
 
 A static civic engagement tool that meets people where they are: its audiences learn the structure of civic opportunity in their county and ZIP code (what kinds of opportunity exist, to what extent, and provided by what kinds of organizations), compare with similar places, and use that to start conversations. Built on the MapAgora datasets (SNF Agora Institute, Johns Hopkins).
 
-Maintainer: Jae Yeon Kim, now at UNC Chapel Hill (https://jaeyk.github.io/, jaekim@unc.edu). Use this affiliation and email in the site's About and Contact sections. Keep crediting the MapAgora data to the SNF Agora Institute at Johns Hopkins, where it was built.
+Maintainer: Jae Yeon Kim, UNC Chapel Hill (https://jaeyk.github.io/, jaekim@unc.edu). Use this affiliation and email in the site's About and Contact sections, stated plainly (never "now at"). Keep crediting the MapAgora data to the SNF Agora Institute at Johns Hopkins, where it was built.
 
 **Learning, not polling.** Voting is not part of the plan (user decision); don't emphasize or add it. **No moderator role:** the public never submits free text (no posts, comments or user listings). So the site is fully static: no accounts, no database, no Firebase.
 
