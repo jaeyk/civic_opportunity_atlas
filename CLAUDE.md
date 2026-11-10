@@ -4,23 +4,25 @@ Guidance for Claude Code when working in this repository.
 
 ## Project direction
 
-A static web tool where community members, organizers and foundations (1) learn the structure of civic opportunity in their county and ZIP code (what kinds of opportunity exist, to what extent, and provided by what kinds of organizations), (2) vote on which kinds of opportunity their community needs, and (3) find strategies that worked in similar places. Built on the MapAgora datasets (SNF Agora Institute, Johns Hopkins).
+A static civic engagement tool that meets people where they are: residents, organizers, universities, state and local governments, and foundations learn the structure of civic opportunity in their county and ZIP code (what kinds of opportunity exist, to what extent, and provided by what kinds of organizations) and find strategies that worked in similar places. Built on the MapAgora datasets (SNF Agora Institute, Johns Hopkins).
 
-**No moderator role (user decision): the public never submits free text.** No posts, comments, user-written strategies or user-added listings. Anything that would need moderation is out of scope.
+**Learning, not polling.** Voting is not part of the plan (user decision); don't emphasize or add it. **No moderator role:** the public never submits free text (no posts, comments or user listings). So the site is fully static: no accounts, no database, no Firebase.
+
+Place page structure (reads top to bottom): plain-language findings → who provides what (org type × opportunity grid vs. peers) → compared with places like yours (10 peers) → action cards (gap, local org types that could fill it, curated strategies) → print the profile / conversation guide.
 
 Planned features:
-- Place profiles (county, ZIP): what kinds of opportunity exist, how much, by which organization types, vs. 10 peer places.
-- Needs voting from a fixed list of categories (opportunity × organization type), anonymous, one vote per person per choice; results shown next to the data ("requests vs. what exists").
-- Gap finder: places below their peers on a given opportunity/type; filters; CSV export.
-- "Present but inactive" organization types (organizations present but offering nothing).
-- Service-area profiles: a set of ZIPs/counties combined; the selection lives in the URL.
-- Printable one-page brief per place; embeddable profile widget.
-- Curated strategy library: written by the team as files in the repo, tagged by place context, surfaced as "worked in places like yours".
+- Entry by ZIP code or town name; optional "What are you trying to do?" paths per audience (find partners, decide where to invest, site a program, find who to organize with).
+- Area profiles: any set of ZIPs/counties (campus neighborhood, city, service region); selection lives in the URL.
+- Equity view: opportunity against poverty, broadband, education, minority share.
+- Gap ranking with filters; CSV and GeoJSON export.
+- "Present but inactive" organization types (present, offering nothing): potential partners.
+- Curated strategy library: written by the team as files in the repo, tagged by place context.
+- Printable one-page profile, a conversation guide (discussion questions generated from the place's findings), a QR code per place, and an embeddable widget.
+- Meeting people where they are: phone-first, small pages, works on slow connections, plain language, Spanish next.
 
 - **Language:** Python for the data pipeline and site build. Don't add R.
-- **Hosting:** GitHub Pages, which serves static files only, so no Django or other server. Python builds static pages and JSON; the browser handles interactivity.
-- **Votes only:** Firebase on the free Spark plan, called from the browser: Firestore + Firebase Anonymous Auth + App Check (reCAPTCHA). No handles, no accounts with names or emails. Cloud Functions are not available on Spark, so integrity lives in `firestore.rules`: a vote doc ID is `{placeId}_{categoryId}_{uid}`, a category must be on the fixed list, and the tally doc must change by exactly the vote in the same batch (`getAfter()`). Publish tallies only, never who voted. Watch the read quota (50k reads/day): read tally docs, not individual votes, and cache.
-- **Data use:** votes are NOT used for research, so no IRB is needed. Ship a short plain-language privacy note.
+- **Hosting:** GitHub Pages, which serves static files only. Python builds static pages and JSON; the browser handles interactivity.
+- **Old dashboard (don't repeat):** exploration-first national map with a 1-5 index, primary-org-type map, sortable table, state/county compare pages, Civic Quest game. The new tool is answer-first and action-oriented instead.
 - The old Quarto/R dashboard and Flask prototype live on the `archive/quarto-dashboard` branch (tag `quarto-dashboard-final`). Mine them for logic, but don't restore them to main.
 
 ## Commands
