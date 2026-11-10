@@ -42,7 +42,7 @@ export const AUDIENCES = {
   },
   organizer: {
     label: "For organizers",
-    text: "Look up your place, then print the profile or the conversation guide to bring into a meeting.",
+    text: "Look up your place, then print the profile or share its link and QR code to bring others into the conversation.",
   },
 };
 

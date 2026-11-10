@@ -6,12 +6,12 @@ Guidance for Claude Code when working in this repository.
 
 ### Audiences (design for them from the first screen)
 
-Four primary audiences: **foundations** (where/how to invest), **universities** (community partnerships and engagement), **state and local governments** (strategic tool for civic engagement offices), **organizers** (understand their community, bring others in). **Community members** are reached through these audiences via shared links, printed profiles and conversation guides; they are not a separate path on the landing page. See the README table for each audience's goals and outputs.
+Four primary audiences: **foundations** (where/how to invest), **universities** (community partnerships and engagement), **state and local governments** (strategic tool for civic engagement offices), **organizers** (understand their community, bring others in). **Community members** are reached through these audiences via shared links, QR codes and printed profiles; they are not a separate path on the landing page. See the README table for each audience's goals and outputs.
 
 ### Landing page
 
 1. One-sentence statement of what the tool is, then a search box: "Enter a ZIP code, town, or county".
-2. Four audience doors ("I work at a foundation / university / government agency" / "I'm an organizer"), each with one line on what they'll get, leading to a pre-set view: foundations → compare places / region profile; universities → area around campus; governments → jurisdiction view; organizers → place page + conversation guide.
+2. Four audience doors ("I work at a foundation / university / government agency" / "I'm an organizer"), each with one line on what they'll get, leading to a pre-set view: foundations → compare places / region profile; universities → area around campus; governments → jurisdiction view; organizers → place page (print / share / QR).
 3. "What you'll learn" strip: the four kinds of opportunity and the organization types, shown with one real example.
 4. "What the data can and can't tell you" up front (de-identified, one snapshot, website-based, about 38% of providers untyped).
 5. Footer: methods, data source and citation, about.
@@ -24,7 +24,7 @@ Maintainer: Jae Yeon Kim, UNC Chapel Hill (https://jaeyk.github.io/, jaekim@unc.
 
 **Learning, not polling.** Voting is not part of the plan (user decision); don't emphasize or add it. **No moderator role:** the public never submits free text (no posts, comments or user listings). So the site is fully static: no accounts, no database, no Firebase.
 
-Place page structure (reads top to bottom): plain-language findings → who provides what (org type × opportunity grid vs. peers) → compared with places like yours (10 peers) → observation cards → print the profile / conversation guide.
+Place page structure (reads top to bottom): plain-language findings → who provides what (org type × opportunity grid vs. peers) → compared with places like yours (10 peers) → observation cards (each with a discussion question) → print / share / QR.
 
 **Observation cards, not action cards.** Claim only what the data supports. Each card has (1) a comparison with peers in plain words ("fewer youth organizations here list civic action on their websites than in 10 similar places"), (2) how confident we can be (number of organizations behind it, share untyped), (3) a discussion question that hands the "why" and "what next" to the community. Never say a gap is a "need", never suggest specific partners (data is de-identified, and 0 means "not described in its IRS tax return or website", not "doesn't offer it"), and never claim a strategy "worked" (MapAgora is one snapshot with no outcomes).
 
@@ -35,7 +35,7 @@ Planned features:
 - Gap ranking with filters; CSV and GeoJSON export.
 - Organization types present locally that list no opportunity online: show as a fact with the website caveat, not as "potential partners".
 - Optional, separate from the data: curated examples written and sourced by the team as repo files, labeled as examples, not evidence.
-- Printable one-page profile, a conversation guide (discussion questions generated from the place's findings), a QR code per place, and an embeddable widget.
+- Printable one-page profile, a QR code per place, and an embeddable widget. The conversation guide page was dropped (user decision); don't bring it back.
 - Meeting people where they are: phone-first, small pages, works on slow connections, plain language, Spanish next.
 
 - **Language:** Python for the data pipeline and site build. Don't add R.
@@ -62,7 +62,7 @@ Planned features:
 
 ## Website (`docs/`)
 
-- Plain HTML + ES-module JS + one CSS file; no framework, no build step for the front end. Pages: `index.html` (landing, audience doors), `place.html?id=` (c+FIPS or z+ZIP), `guide.html?id=` (printable conversation guide), `state.html?st=` (jurisdiction view: map of counties or ZIP codes shaded vs. similar places, a plain-language poverty takeaway, sortable table, CSV), `area.html?ids=` (combine places), `about.html`.
+- Plain HTML + ES-module JS + one CSS file; no framework, no build step for the front end. Pages: `index.html` (landing, audience doors), `place.html?id=` (c+FIPS or z+ZIP), `state.html?st=` (jurisdiction view: map of counties or ZIP codes shaded vs. similar places, a plain-language poverty takeaway, sortable table, CSV), `area.html?ids=` (combine places), `about.html`.
 - `pipeline/site_data.py` writes one JSON per place plus state files and a search index into `docs/data/`. All generated sentences (findings, observation cards, questions) are written there, and `tests/test_site_data.py` checks them for forbidden claims. Change wording in Python, not in JS.
 - The shading rule (`compareClass` in `docs/assets/common.js`) mirrors `MIN_COUNT` and the ratio bands in `site_data.py`; keep them in sync.
 - **Colors (user decision):** theme is the "Smith" palette from MoMAColors (orange #ef7923, teal #75bca9, periwinkle #7b89bb, sand #e9de97, charcoal #2a2e38; MIT, credited on about.html). Never red vs. blue (partisan in the U.S.). Comparisons use teal = more, orange = fewer, neutral = about the same, near-white = too few to compare; map teal deepened to #3fa88f so it never reads as gray; validated with the dataviz palette checker. Text/accent use darkened shades for contrast. Tokens live in the `:root` block of docs/assets/style.css.
@@ -71,7 +71,7 @@ Planned features:
 - **State map:** three bands only (fewer / about the same / more, cut at 0.75 and 1.33) plus the MIN_COUNT evidence rule, so tiny places don't dominate. The place-page grid keeps five bands with ▲/▼ glyphs.
 - "Combine places" (area.html) is the name for the multi-place view; don't call it "build an area" (user found it ambiguous).
 - Map shapes: `site_data.write_shapes` writes simplified per-state GeoJSON to `docs/data/g/{ST}-c.json` / `{ST}-z.json`; drawn with d3 (cdnjs) in `state.js`, projection rotated to each state's centroid (Alaska crosses 180°). No point/scatter plots for general audiences: user found them too technical.
-- Learning design follows Learning Patterns by Tim Klapdor (CC BY-NC-ND 4.0), applied per the patterns' own guidance (checked on the site): orientation (Look → Compare → Discuss, with why), teaser + aha moment ("Guess first" then the answer), reveal ("How these numbers are made": the hidden process), compare & contrast (similar places), shared meaning (guide step 1: what does getting involved mean to you), interpret & evaluate (guide step 5: what the data was built to show, then how well it captures us), open ended questions, reflection (scaffolded prompts). Don't relabel other features with these names. Credit it on about.html; name patterns and link, but never copy or adapt their text (ND license).
+- Learning design follows Learning Patterns by Tim Klapdor (CC BY-NC-ND 4.0), applied per the patterns' own guidance (checked on the site): orientation (Look → Compare → Discuss, with why), teaser + aha moment ("Guess first" then the answer), reveal ("How these numbers are made": the hidden process), compare & contrast (similar places), open ended questions (a discussion question on every observation card). Don't relabel other features with these names. Credit it on about.html; name patterns and link, but never copy or adapt their text (ND license).
 - Every chart/table shows a short source line; full references live on about.html#sources (MapAgora, ACS 2017–2021, USDA ERS RUCC 2013, Census 2020 ZCTA-county file, Census boundaries).
 - `docs/data/` is committed (Pages needs it): about 146 MB raw, so every data rebuild adds history. Rebuild only when data or text rules change.
 - Site name: "Civic Opportunity Atlas" (confirmed; the repo is named after it).

@@ -11,15 +11,15 @@ A static web tool, in development, for civic engagement that meets people where 
 | 🌱 **Foundations** | Decide where and how to invest in civic life | Places compared with similar places; profiles of a grant region or portfolio; exports for proposals and board decks |
 | 🎓 **Universities** | Build community partnerships and engagement | A profile of the area around campus; which kinds of organizations offer which opportunities nearby; briefs for engagement reports |
 | 🏛️ **State and local governments** | Plan civic engagement strategy (e.g., a civic engagement office) | Every county or ZIP code in the jurisdiction, compared with peers and with poverty, broadband and education; GIS exports |
-| 📣 **Organizers** | Understand their community and bring others into the conversation | A plain-language profile of their place, a printable version, a conversation guide, and a QR code for flyers |
+| 📣 **Organizers** | Understand their community and bring others into the conversation | A plain-language profile of their place, a printable version, and a QR code for flyers |
 
-🏘️ **Community members** are who these audiences engage. The tool reaches them through shared links, printed profiles, and conversation guides that work on a phone or on paper.
+🏘️ **Community members** are who these audiences engage. The tool reaches them through shared links, QR codes, and printed profiles that work on a phone or on paper.
 
 ## What it does
 
 1. **Learn** how civic opportunity is structured in their county and ZIP code: what kinds of opportunity exist (membership, volunteering, public events, civic and political action), to what extent, and which kinds of organizations provide them.
 2. **Compare** with similar places, through plain-language observations that state how confident the data lets us be.
-3. **Start conversations**: printable profiles and discussion guides built from each place's own findings.
+3. **Start conversations**: printable profiles, QR codes, and discussion questions built from each place's own findings.
 
 It is built on the MapAgora datasets from the [SNF Agora Institute](https://snfagora.jhu.edu/) at Johns Hopkins University.
 
@@ -79,7 +79,7 @@ Organization records are de-identified. There are no names, EINs or street addre
 
 **Learning design**
 
-The place pages and conversation guides draw on these patterns: orientation, teaser, aha moment, reveal, compare & contrast, shared meaning, interpret & evaluate, open ended questions, and reflection. [Learning Patterns](https://learning-patterns.com) by [Tim Klapdor](https://timklapdor.com) is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). Pattern names are used with credit; we don't reproduce or adapt the pattern texts, which the license doesn't allow.
+The place pages draw on these patterns: orientation, teaser, aha moment, reveal, compare & contrast, and open ended questions. [Learning Patterns](https://learning-patterns.com) by [Tim Klapdor](https://timklapdor.com) is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). Pattern names are used with credit; we don't reproduce or adapt the pattern texts, which the license doesn't allow.
 
 ## Team
 

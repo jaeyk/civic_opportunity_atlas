@@ -16,12 +16,14 @@
   --focus: #7b89bb;          /* Smith periwinkle */
 
   /* comparison with similar places: teal = more, orange = fewer, neutral = similar.
-     Never red vs. blue (partisan in the U.S.). Strong cells use Smith's own teal and orange. */
-  --more-2: #75bca9;
-  --more-1: #d3ebe4;
+     Never red vs. blue (partisan in the U.S.). Smith's teal is much less colorful than its
+     orange, so both are adjusted to equal visual weight (OKLCH: teal L .66 C .10, orange
+     L .73 C .14; mild tints C ~.04 each) and "far more" never looks weaker than "far fewer". */
+  --more-2: #3fa88f;
+  --more-1: #c2e4da;
   --same: #eceae3;
-  --fewer-1: #fadcc2;
-  --fewer-2: #ef7923;
+  --fewer-1: #fbe0cb;
+  --fewer-2: #ee8d4c;
   --dot-peer: #a3a39b;
   --dot-place: #5d6aa3;      /* Smith periwinkle, deepened */
 
@@ -46,7 +48,7 @@
     --more-1: #234a42;
     --same: #383c48;
     --fewer-1: #4f3622;
-    --fewer-2: #d9681a;
+    --fewer-2: #c97a3e;
     --dot-peer: #7d7f88;
     --dot-place: #a9b3dd;
     color-scheme: dark;
@@ -239,10 +241,6 @@ table.data tr:hover td { background: var(--accent-soft); }
 dialog { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); max-width: min(420px, 92vw); }
 dialog::backdrop { background: rgba(0, 0, 0, .35); }
 
-/* guide */
-.guide ol { padding-left: 1.3rem; }
-.guide ol li { margin: 0 0 1.4rem; }
-.guide .lines { border-bottom: 1px solid var(--line); height: 2.2rem; }
 
 @media (max-width: 560px) {
   .strip-row { grid-template-columns: 1fr; gap: 2px; }
@@ -286,8 +284,8 @@ dialog::backdrop { background: rgba(0, 0, 0, .35); }
 .map path.outline { fill: none; stroke: var(--ink-3); stroke-width: .8; pointer-events: none; }
 /* map: Smith teal (deepened slightly so it never reads as gray) and Smith orange;
    validated with the dataviz palette checker (CVD + contrast); text legend and table provide relief */
-:root { --map-more: #3fa88f; --map-fewer: #ef7923; --map-same: #d9dbe0; --map-none: #fbfaf6; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --map-more: #26a083; --map-fewer: #d9681a; --map-same: #4a4d57; --map-none: #23262e; } }
+:root { --map-more: #3fa88f; --map-fewer: #ee8d4c; --map-same: #d9dbe0; --map-none: #fbfaf6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --map-more: #26a083; --map-fewer: #c97a3e; --map-same: #4a4d57; --map-none: #23262e; } }
 .f-more-1 { fill: var(--map-more); } .f-same { fill: var(--map-same); } .f-fewer-1 { fill: var(--map-fewer); } .f-none { fill: var(--map-none); }
 .m-more-1 { background: var(--map-more); } .m-same { background: var(--map-same); } .m-fewer-1 { background: var(--map-fewer); } .m-none { background: var(--map-none); }
 .map path.place { stroke: var(--line); }

@@ -26,7 +26,6 @@ async function main() {
 
   // actions
   $("print").addEventListener("click", () => print());
-  $("guide-link").href = `guide.html?id=${p.id}`;
   if (p.county_id) { $("county-link").href = placeURL(p.county_id); $("county-link").textContent = "See the county"; }
   else { $("county-link").href = `state.html?st=${p.state}`; $("county-link").textContent = `All of ${p.state}`; }
   $("area-link").href = `area.html?ids=${p.id}`;
