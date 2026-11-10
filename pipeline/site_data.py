@@ -418,7 +418,7 @@ def place_records(level: str, places: pd.DataFrame, providers: pd.DataFrame,
 
 STATE_COLS = ["id", "name", "town", "county", "population", "rurality", "orgs", "any_opp",
               "rate_any", "pctile_any", "vs_any", "vs_membership", "vs_volunteer", "vs_events",
-              "vs_take_action", *CONTEXT]
+              "vs_take_action", *CONTEXT, "membership", "volunteer", "events", "take_action"]
 
 
 def state_rows(records: dict, level: str, towns: pd.Series) -> dict:
@@ -435,6 +435,7 @@ def state_rows(records: dict, level: str, towns: pd.Series) -> dict:
             rec["pctile"]["any_opp"], vp.get("any_opp"), vp.get("membership"),
             vp.get("volunteer"), vp.get("events"), vp.get("take_action"),
             *[rec["context"][c] for c in CONTEXT],
+            *[rec["totals"][k] for k in ("membership", "volunteer", "events", "take_action")],
         ])
     return by_state
 

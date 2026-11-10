@@ -69,7 +69,7 @@ export const param = (k) => new URLSearchParams(location.search).get(k);
 // ---- header / footer -----------------------------------------------------------
 export function chrome(current) {
   const nav = [
-    ["index.html", "Home"], ["state.html", "Explore a state"], ["area.html", "Build an area"], ["about.html", "About the data"],
+    ["index.html", "Home"], ["state.html", "Explore a state"], ["area.html", "Combine places"], ["about.html", "About the data"],
   ];
   document.querySelector("header.site-header").innerHTML = `
     <div class="wrap">

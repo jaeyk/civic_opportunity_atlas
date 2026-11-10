@@ -77,7 +77,7 @@ Organization records are de-identified. There are no names, EINs or street addre
 
 **Learning design**
 
-The place pages and conversation guides follow learning patterns (orientation, teaser and reveal, compare and contrast, interpret and evaluate, open-ended questions, shared meaning, reflection) from [Learning Patterns](https://learning-patterns.com/) by Tim Klapdor, licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). Pattern names are used with credit; we don't reproduce or adapt the pattern texts, which the license doesn't allow.
+The place pages and conversation guides draw on these patterns: orientation, teaser, aha moment, reveal, compare & contrast, shared meaning, interpret & evaluate, open ended questions, and reflection. [Learning Patterns](https://learning-patterns.com) by [Tim Klapdor](https://timklapdor.com) is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). Pattern names are used with credit; we don't reproduce or adapt the pattern texts, which the license doesn't allow.
 
 ## Team
 

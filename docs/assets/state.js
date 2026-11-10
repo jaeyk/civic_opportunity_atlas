@@ -8,11 +8,20 @@ const STATE_NAMES = { AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas"
 const MEASURE_WORDS = { vs_any: "a way to get involved", vs_membership: "membership", vs_volunteer: "volunteering", vs_events: "public events", vs_take_action: "civic or political action" };
 const FEWER = 0.75;
 
-// Same bands as the place-page grid (assets/common.js compareClass) and pipeline/site_data.py
-const band = (r) => r == null ? ["none", "Too few to compare"]
-  : r >= 2 ? ["more-2", "Far more than similar places"] : r >= 1.33 ? ["more-1", "More than similar places"]
-  : r > 0.75 ? ["same", "About the same as similar places"] : r > 0.5 ? ["fewer-1", "Fewer than similar places"]
-  : ["fewer-2", "Far fewer than similar places"];
+// Three soft bands with the site's evidence rule (pipeline/site_data.py: MIN_COUNT, 0.75 / 1.33):
+// a place is shaded only if ~5+ organizations stand behind the comparison, so tiny places
+// with a couple of organizations don't dominate the map.
+const COUNT_FOR = { vs_any: "any_opp", vs_membership: "membership", vs_volunteer: "volunteer", vs_events: "events", vs_take_action: "take_action" };
+const MIN_COUNT = 5;
+function band(r, m) {
+  const ratio = r ? r[m] : null;
+  if (ratio == null) return ["none", "Too few to compare"];
+  const n = r[COUNT_FOR[m]] ?? 0, expected = ratio > 0 ? n / ratio : 0;
+  if (Math.max(n, expected) < MIN_COUNT) return ["none", "Too few to compare"];
+  if (ratio >= 1.33) return ["more-1", "More than similar places"];
+  if (ratio <= 0.75) return ["fewer-1", "Fewer than similar places"];
+  return ["same", "About the same as similar places"];
+}
 
 const COLS = [
   { key: "label", label: "Place", fmt: (v, r) => `<a href="${placeURL(r.id)}">${esc(v)}</a>` },
@@ -96,7 +105,7 @@ function update(redrawMap) {
   history.replaceState(null, "", u);
 
   const keep = filtered(), m = $("measure").value;
-  rows = all.filter((r) => keep(r) && (!$("only").checked || (r[m] != null && r[m] <= FEWER)));
+  rows = all.filter((r) => keep(r) && (!$("only").checked || band(r, m)[0] === "fewer-1"));
   const st = $("st").value, t = data.totals;
   $("stats").innerHTML = [
     [fmt(data.population), `residents in ${STATE_NAMES[st] || st}`],
@@ -151,7 +160,7 @@ async function drawMap() {
 
 function tipHTML(r, id) {
   if (!r) return "No data for this area";
-  const m = $("measure").value, [, words] = band(r[m]);
+  const m = $("measure").value, [, words] = band(r, m);
   return `<b>${esc(r.label)}</b><br>${esc(MEASURE_WORDS[m][0].toUpperCase() + MEASURE_WORDS[m].slice(1))}: ${esc(words.toLowerCase())}${r[m] != null ? ` (${ratioText(r[m])})` : ""}<br>${fmt(r.any_opp)} of ${fmt(r.orgs)} organizations list a way to get involved`;
 }
 
@@ -160,12 +169,12 @@ function restyleMap() {
   const byId = Object.fromEntries(all.map((r) => [r.id, r]));
   box.querySelectorAll("path.place").forEach((el) => {
     const r = byId[el.dataset.id];
-    const [cls] = band(r ? r[m] : null);
+    const [cls] = band(r, m);
     el.setAttribute("class", `place f-${cls}${r && !keep(r) ? " dim" : ""}`);
   });
-  $("map-legend").innerHTML = ["fewer-2", "fewer-1", "same", "more-1", "more-2", "none"]
-    .map((c) => `<span><i class="c-${c}"></i>${{ "fewer-2": "Far fewer ▼▼", "fewer-1": "Fewer ▼", same: "About the same", "more-1": "More ▲", "more-2": "Far more ▲▲", none: "Too few to compare" }[c]}</span>`).join("")
-    + `<span class="muted">· compared with similar places</span>`;
+  $("map-legend").innerHTML = [["fewer-1", "Fewer"], ["same", "About the same"], ["more-1", "More"], ["none", "Too few to compare"]]
+    .map(([c, t]) => `<span><i class="m-${c}"></i>${t}</span>`).join("")
+    + `<span class="muted">· than similar places, per resident</span>`;
 }
 
 // ---- table ------------------------------------------------------------------------
