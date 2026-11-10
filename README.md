@@ -2,7 +2,7 @@
 
 A web tool, in development, that helps community members:
 
-1. **Learn** how civic opportunity is structured in their county and ZIP code: which organizations exist, what kinds of opportunity they offer (membership, volunteering, events, civic action), and how their community compares with similar places.
+1. **Learn** how civic opportunity is structured in their county and ZIP code: what kinds of opportunity exist (membership, volunteering, public events, civic and political action), to what extent, and which kinds of organizations provide them, compared with similar places.
 2. **Suggest and vote** on the kinds of community engagement opportunities their community needs.
 3. **Share strategies** that worked in one community with others.
 
@@ -17,16 +17,19 @@ It is built on the MapAgora datasets from the [SNF Agora Institute](https://snfa
 | `raw_data/` | County-level MapAgora data, county classifications (USDA RUCC), county/state boundaries |
 | `raw_data/mapagora_full/` | Organization- and ZIP-level MapAgora data. Not in git; run `./get_full_data.sh` |
 | `data/derived/` | Derived files from the prototype: county lookup, centroids, GeoJSON, Civic Quest JSON |
-| `scripts/` | Python analysis scripts, e.g. `civic_cold_spots.py` (civic deserts and cold spots by ZIP code) |
+| `pipeline/` | Python data pipeline: opportunity × organization-type counts, smoothed rates, peer places, clusters |
+| `data/processed/` | Pipeline output (parquet). Not in git; run `python -m pipeline.build` |
+| `tests/` | Pipeline tests |
 | `misc/` | Source paper: Kim, de Vries & Han (2025), *Scientific Data* |
 
 ## Setup
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install -r scripts/requirements.txt
-./get_full_data.sh                              # org- and ZIP-level data (~55 MB)
-.venv/bin/python scripts/civic_cold_spots.py    # writes outputs/civic_cold_spots/
+.venv/bin/pip install -r requirements.txt
+./get_full_data.sh                      # org- and ZIP-level data (~55 MB)
+.venv/bin/python -m pipeline.build      # writes data/processed/ (~1 min)
+.venv/bin/python -m pytest tests
 ```
 
 ## Data

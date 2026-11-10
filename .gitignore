@@ -22,3 +22,6 @@ __pycache__/
 
 # Generated analysis outputs (re-create with scripts/)
 /outputs/
+
+# Pipeline build output (python -m pipeline.build)
+/data/processed/
