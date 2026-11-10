@@ -129,12 +129,13 @@ def findings(p: dict) -> list:
     orgs = f"{_fmt(t['orgs'])} nonprofit organization{'s' if t['orgs'] != 1 else ''}"
     if t["any_opp"] == 0:
         none = "It does not list" if t["orgs"] == 1 else "None of them list"
-        out.append(f"{name} has {orgs}. {none} a way to get involved on a website (membership, "
+        out.append(f"{name} has {orgs}. {none} a way to get involved in a tax return or on a website (membership, "
                    "volunteering, public events, or civic and political action).")
         return out
     out.append(
         f"{name} has {orgs}. {_fmt(t['any_opp'])} of them ({round(share * 100)}%) list at least "
-        "one way to get involved on their websites: membership, volunteering, public events, or "
+        "one way to get involved in their tax returns or on their websites: membership, volunteering, "
+        "public events, or "
         "civic and political action.")
     opp4 = {k: t[k] for k in ["membership", "volunteer", "events", "take_action"]}
     top = max(opp4, key=opp4.get)
@@ -196,8 +197,8 @@ def observations(p: dict) -> list:
                 cards.append({
                     "kind": "fewer", "score": 1.2 * abs(math.log(ratio)) * _evidence(support),
                     "title": f"Fewer organizations list {phrase}",
-                    "text": (f"Per resident, fewer organizations in {name} list {phrase} on their "
-                             f"websites than in 10 similar places (about {round(ratio * 100)}% "
+                    "text": (f"Per resident, fewer organizations in {name} list {phrase} in their "
+                             f"tax returns or on their websites than in 10 similar places (about {round(ratio * 100)}% "
                              "of the typical level)."),
                     "confidence": _confidence(round(support), p["typed_share"]),
                     "question": (f"Does that match what people here experience? Where do people "
@@ -207,8 +208,8 @@ def observations(p: dict) -> list:
                 cards.append({
                     "kind": "more", "score": 1.2 * abs(math.log(ratio)) * _evidence(support),
                     "title": f"More organizations list {phrase}",
-                    "text": (f"Per resident, more organizations in {name} list {phrase} on their "
-                             f"websites than in 10 similar places (about {ratio:.1f} times the "
+                    "text": (f"Per resident, more organizations in {name} list {phrase} in their "
+                             f"tax returns or on their websites than in 10 similar places (about {ratio:.1f} times the "
                              "typical level)."),
                     "confidence": _confidence(round(support), p["typed_share"]),
                     "question": (f"Why are {noun} so common here? Who takes part, and who "
@@ -271,8 +272,8 @@ def observations(p: dict) -> list:
             "kind": "quiet", "score": 0.25,
             "title": f"{_tp(typ, True)} organizations that list no opportunities",
             "text": (f"{_fmt(k)} {_tp(typ)} organizations here list none of the four kinds "
-                     "of opportunity on their websites. Many may still offer them without "
-                     "saying so online, or have no website at all."),
+                     "of opportunity in their tax returns or on their websites. Many may still offer them "
+                     "without describing them there."),
             "confidence": _confidence(k, p["typed_share"]),
             "question": (f"What do {_tp(typ)} organizations here do in the community? How "
                          "do people find out about them?"),
@@ -289,7 +290,7 @@ def observations(p: dict) -> list:
             "kind": "small",
             "title": "Too few organizations for firm comparisons",
             "text": (f"{name} has {_count_phrase(t['any_opp'], '')} listing opportunities "
-                     "online, too few to compare reliably with similar places. Civic life here "
+                     "in their tax returns or websites, too few to compare reliably with similar places. Civic life here "
                      "may run through churches, schools, local government, or informal groups "
                      "that these records don't capture."),
             "confidence": _confidence(t["orgs"], p["typed_share"]),

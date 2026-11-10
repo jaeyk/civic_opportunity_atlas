@@ -1,51 +1,54 @@
 /* Civic Opportunity Atlas: shared styles. Phone-first; light and dark; print. */
 
+/* Theme: "Smith" palette from MoMAColors (Blake R. Mills, MIT License):
+   orange #ef7923, teal #75bca9, periwinkle #7b89bb, sand #e9de97, charcoal #2a2e38.
+   Text and accent use darker shades of these for readable contrast. */
 :root {
-  --page: #f9f9f7;
-  --surface: #fcfcfb;
-  --surface-2: #f0efec;
-  --line: #e2e1dc;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --ink-3: #75746f;
-  --accent: #1c5cab;
-  --accent-soft: #e6effb;
-  --focus: #2a78d6;
+  --page: #f8f7f2;
+  --surface: #fdfcf8;
+  --surface-2: #f1efe6;
+  --line: #e2dfd2;
+  --ink: #2a2e38;            /* Smith charcoal */
+  --ink-2: #4f5363;
+  --ink-3: #767a88;
+  --accent: #45528a;         /* Smith periwinkle, darkened for text (7:1) */
+  --accent-soft: #f6f0d2;    /* Smith sand, light */
+  --focus: #7b89bb;          /* Smith periwinkle */
 
-  /* comparison with similar places: teal = more, orange = fewer, gray = similar.
-     Deliberately not red/blue, which read as partisan in the U.S. */
-  --more-2: #7cc8bb;
-  --more-1: #c6e9e2;
-  --same: #efeeea;
-  --fewer-1: #f6dcc0;
-  --fewer-2: #eeb27a;
-  --dot-peer: #9a9993;
-  --dot-place: #1c5cab;
+  /* comparison with similar places: teal = more, orange = fewer, neutral = similar.
+     Never red vs. blue (partisan in the U.S.). Strong cells use Smith's own teal and orange. */
+  --more-2: #75bca9;
+  --more-1: #d3ebe4;
+  --same: #eceae3;
+  --fewer-1: #fadcc2;
+  --fewer-2: #ef7923;
+  --dot-peer: #a3a39b;
+  --dot-place: #5d6aa3;      /* Smith periwinkle, deepened */
 
   --radius: 10px;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 2px 8px rgba(0, 0, 0, .04);
+  --shadow: 0 1px 2px rgba(42, 46, 56, .06), 0 2px 8px rgba(42, 46, 56, .05);
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --page: #0d0d0d;
-    --surface: #1a1a19;
-    --surface-2: #242422;
-    --line: #34342f;
-    --ink: #f0efec;
-    --ink-2: #c3c2b7;
-    --ink-3: #9a998f;
-    --accent: #86b6ef;
-    --accent-soft: #1d2a3b;
-    --more-2: #16998a;
-    --more-1: #1e4a44;
-    --same: #2a2a27;
-    --fewer-1: #4d3620;
-    --fewer-2: #c47a2c;
-    --dot-peer: #77766f;
-    --dot-place: #86b6ef;
+    --page: #1d2027;
+    --surface: #2a2e38;        /* Smith charcoal */
+    --surface-2: #333845;
+    --line: #424756;
+    --ink: #f1efe6;
+    --ink-2: #c9c8bf;
+    --ink-3: #9d9ca0;
+    --accent: #a9b3dd;
+    --accent-soft: #3a3626;
+    --more-2: #26a083;
+    --more-1: #234a42;
+    --same: #383c48;
+    --fewer-1: #4f3622;
+    --fewer-2: #d9681a;
+    --dot-peer: #7d7f88;
+    --dot-place: #a9b3dd;
     color-scheme: dark;
   }
 }
@@ -281,10 +284,10 @@ dialog::backdrop { background: rgba(0, 0, 0, .35); }
 .map path.place:hover { stroke: var(--ink); stroke-width: 1.5; }
 .map path.dim { opacity: .25; }
 .map path.outline { fill: none; stroke: var(--ink-3); stroke-width: .8; pointer-events: none; }
-/* map: moderate tints (no saturated extremes); "too few" is near-white so it reads as "no comparison" */
-/* validated with the dataviz palette checker (CVD + contrast); text legend and table provide relief */
-:root { --map-more: #2f9e8f; --map-fewer: #e08a2e; --map-same: #d6d4ce; --map-none: #fafaf8; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --map-more: #16998a; --map-fewer: #c47a2c; --map-same: #4a4a45; --map-none: #222220; } }
+/* map: Smith teal (deepened slightly so it never reads as gray) and Smith orange;
+   validated with the dataviz palette checker (CVD + contrast); text legend and table provide relief */
+:root { --map-more: #3fa88f; --map-fewer: #ef7923; --map-same: #d9dbe0; --map-none: #fbfaf6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --map-more: #26a083; --map-fewer: #d9681a; --map-same: #4a4d57; --map-none: #23262e; } }
 .f-more-1 { fill: var(--map-more); } .f-same { fill: var(--map-same); } .f-fewer-1 { fill: var(--map-fewer); } .f-none { fill: var(--map-none); }
 .m-more-1 { background: var(--map-more); } .m-same { background: var(--map-same); } .m-fewer-1 { background: var(--map-fewer); } .m-none { background: var(--map-none); }
 .map path.place { stroke: var(--line); }
@@ -296,3 +299,11 @@ dialog::backdrop { background: rgba(0, 0, 0, .35); }
 .reveal-box summary { cursor: pointer; font-weight: 600; color: var(--accent); }
 .reveal-box ol { margin: .75rem 0 .5rem; padding-left: 1.3rem; }
 .reveal-box li { margin: .4rem 0; }
+
+/* audience emojis */
+.emoji { margin-right: .4em; font-style: normal; }
+.door strong .emoji { font-size: 1.25em; vertical-align: -2px; }
+.reach { margin: 14px 0 0; color: var(--ink-2); }
+.audiences { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; gap: 10px; }
+.audiences li { display: flex; gap: 10px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; }
+.audiences .emoji { font-size: 1.4rem; line-height: 1.2; margin: 0; }

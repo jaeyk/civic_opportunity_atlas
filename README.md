@@ -8,12 +8,12 @@ A static web tool, in development, for civic engagement that meets people where 
 
 | Audience | What they're trying to do | What the tool gives them |
 |---|---|---|
-| **Foundations** | Decide where and how to invest in civic life | Places compared with similar places; profiles of a grant region or portfolio; exports for proposals and board decks |
-| **Universities** | Build community partnerships and engagement | A profile of the area around campus; which kinds of organizations offer which opportunities nearby; briefs for engagement reports |
-| **State and local governments** | Plan civic engagement strategy (e.g., a civic engagement office) | Every county or ZIP code in the jurisdiction, compared with peers and with poverty, broadband and education; GIS exports |
-| **Organizers** | Understand their community and bring others into the conversation | A plain-language profile of their place, a printable version, a conversation guide, and a QR code for flyers |
+| 🌱 **Foundations** | Decide where and how to invest in civic life | Places compared with similar places; profiles of a grant region or portfolio; exports for proposals and board decks |
+| 🎓 **Universities** | Build community partnerships and engagement | A profile of the area around campus; which kinds of organizations offer which opportunities nearby; briefs for engagement reports |
+| 🏛️ **State and local governments** | Plan civic engagement strategy (e.g., a civic engagement office) | Every county or ZIP code in the jurisdiction, compared with peers and with poverty, broadband and education; GIS exports |
+| 📣 **Organizers** | Understand their community and bring others into the conversation | A plain-language profile of their place, a printable version, a conversation guide, and a QR code for flyers |
 
-**Community members** are who these audiences engage. The tool reaches them through shared links, printed profiles, and conversation guides that work on a phone or on paper.
+🏘️ **Community members** are who these audiences engage. The tool reaches them through shared links, printed profiles, and conversation guides that work on a phone or on paper.
 
 ## What it does
 
@@ -74,6 +74,8 @@ Organization records are de-identified. There are no names, EINs or street addre
 - ZIP-to-county assignment: U.S. Census Bureau, [2020 ZCTA-to-county relationship file](https://www.census.gov/geographies/reference-files/time-series/geo/relationship-files.2020.html)
 - Boundaries (pipeline only): U.S. Census Bureau [cartographic boundary files](https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html) for counties, states, and 2020 ZCTAs
 - QR codes: [qrcode.js](https://github.com/davidshimjs/qrcodejs) (MIT License)
+- Colors: "Smith" palette from [MoMAColors](https://github.com/BlakeRMills/MoMAColors) by Blake R. Mills (MIT License)
+- Maps: [D3](https://d3js.org) (ISC License)
 
 **Learning design**
 

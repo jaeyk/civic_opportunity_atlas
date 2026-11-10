@@ -148,7 +148,7 @@ function renderPeers(p) {
 }
 
 function renderCards(p) {
-  const tag = { more: "More common here", fewer: "Less common here", quiet: "Not listed online", small: "Small numbers", similar: "Typical" };
+  const tag = { more: "More common here", fewer: "Less common here", quiet: "Not listed", small: "Small numbers", similar: "Typical" };
   $("cards").innerHTML = p.observations.map((c) => `
     <article class="card">
       <span class="tag">${tag[c.kind] || ""}</span>

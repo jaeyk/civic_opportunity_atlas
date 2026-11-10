@@ -23,7 +23,7 @@
 
       <section>
         <h2>How to use this guide</h2>
-        <p>Bring it to a meeting, class, or community gathering. It moves in six short steps. The data describes what nonprofit organizations list on their websites; the people in the room know the rest, so give most of the time to talking. If someone answers in a word or two, ask: <i>"Why do you think that?"</i></p>
+        <p>Bring it to a meeting, class, or community gathering. It moves in six short steps. The data describes what formal nonprofit organizations describe in their IRS tax returns and websites; the people in the room know the rest, so give most of the time to talking. If someone answers in a word or two, ask: <i>"Why do you think that?"</i></p>
       </section>
 
       <section>
@@ -102,7 +102,7 @@
       const OPP = { membership: "membership", volunteer: "volunteering", events: "public events", take_action: "civic or political action" };
       const top = Object.keys(OPP).sort((a, b) => t[b] - t[a])[0];
       const guesses = [];
-      if (t.orgs > 0) guesses.push(`Out of every 10 nonprofit organizations in ${name}, how many list at least one way to get involved on their websites?`);
+      if (t.orgs > 0) guesses.push(`Out of every 10 nonprofit organizations in ${name}, how many describe at least one way to get involved in their tax returns or on their websites?`);
       if (t.any_opp > 0) guesses.push("Which is most common here: membership, volunteering, public events, or civic and political action?");
       guesses.push("Which kinds of organizations do you think offer the most ways to get involved here?");
       list("guesses", guesses);
@@ -124,7 +124,7 @@
       ]);
       // Step 5: interpret, then evaluate, the data itself
       list("evaluate", [
-        "Interpret: what was this data built to show? (It counts nonprofit organizations and whether their websites list membership, volunteering, public events, or civic and political action.)",
+        "Interpret: what was this data built to show? (It counts formal nonprofit organizations and whether their IRS tax returns or websites describe membership, volunteering, public events, or civic and political action.)",
         "Evaluate: thinking back to what \u201cgetting involved\u201d meant to people in step 1, how well does this data capture it here? What does it miss?",
         "Which organizations, gatherings, or places matter here but would not show up in nonprofit records?",
       ]);
