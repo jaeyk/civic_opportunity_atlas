@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Place profile · Civic Opportunity Atlas</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header"></header>
+  <main class="wrap" id="main">
+    <div class="search no-print" style="margin-top:1rem">
+      <input id="q" type="search" autocomplete="off" placeholder="Look up another ZIP code, town, or county" aria-label="Look up another place">
+    </div>
+    <p class="loading" id="loading">Loading…</p>
+    <div id="content" class="hidden">
+      <section class="place-head">
+        <p class="muted print-only">Civic Opportunity Atlas · community profile</p>
+        <h1 id="title"></h1>
+        <div class="meta" id="meta"></div>
+        <div class="actions">
+          <button class="btn primary" id="print">Print this profile</button>
+          <a class="btn" id="guide-link">Conversation guide</a>
+          <button class="btn" id="share">Share / QR code</button>
+          <a class="btn" id="county-link"></a>
+          <a class="btn" id="area-link">Add to an area</a>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-find">
+        <h2 id="h-find">What we found</h2>
+        <ul class="findings" id="findings"></ul>
+      </section>
+
+      <section aria-labelledby="h-grid">
+        <h2 id="h-grid">Who provides what</h2>
+        <p class="section-intro">How many organizations of each kind list each opportunity on their websites. <span id="grid-compare-note">Shading compares this place with 10 similar places, per resident.</span></p>
+        <div class="toggle no-print" role="group" aria-label="Show">
+          <button type="button" data-mode="n" aria-pressed="true">Number of organizations</button>
+          <button type="button" data-mode="rate" aria-pressed="false">Per 10,000 residents</button>
+        </div>
+        <div class="grid-scroll"><table class="wpw" id="grid"></table></div>
+        <div class="legend" id="legend"></div>
+      </section>
+
+      <section aria-labelledby="h-peers" id="peers-section">
+        <h2 id="h-peers">Compared with places like this one</h2>
+        <p class="section-intro">The 10 places most similar in population size, rurality, poverty, education, broadband access, and demographics. Each dot is a place; the <b style="color:var(--dot-place)">blue dot</b> is this one. Rates are per 10,000 residents, smoothed so very small places don't swing to extremes.</p>
+        <div class="panel"><div class="strips" id="strips"></div></div>
+        <details style="margin-top:1rem">
+          <summary>The 10 similar places, and how they were matched</summary>
+          <ol class="peer-list" id="peer-list"></ol>
+          <table class="ctx" id="ctx" style="margin-top:1rem"></table>
+        </details>
+      </section>
+
+      <section aria-labelledby="h-obs">
+        <h2 id="h-obs">Things worth talking about</h2>
+        <p class="section-intro">Observations from the data, each with how much weight it can bear and a question to discuss. They describe what organizations list online. They don't tell you what this community wants or why.</p>
+        <div class="cards" id="cards"></div>
+      </section>
+
+      <section aria-labelledby="h-more" class="no-print">
+        <h2 id="h-more">Questions about the data?</h2>
+        <p>See <a href="about.html">About the data</a>, the <a href="https://www.nature.com/articles/s41597-025-05353-6">data paper</a>, the <a href="https://doi.org/10.7910/DVN/IRCA7C">Harvard Dataverse</a> and <a href="https://github.com/snfagora/american_civic_opportunity_datasets">GitHub</a> repositories, and the <a href="https://snfagora.github.io/modern_agora_dashboard/#about">Mapping the Modern Agora</a> project.</p>
+      </section>
+      <p class="print-only muted" style="margin-top:1rem">Source: MapAgora (Kim, de Vries &amp; Han 2025), doi:10.7910/DVN/IRCA7C. <span id="print-url"></span></p>
+    </div>
+  </main>
+  <footer class="site-footer"></footer>
+
+  <dialog id="share-dialog">
+    <h3>Share this profile</h3>
+    <p class="muted">Print this QR code on a flyer, or copy the link.</p>
+    <div class="qr-box" id="qr"></div>
+    <p style="word-break:break-all;margin-top:.8rem"><code id="share-url"></code></p>
+    <div class="actions">
+      <button class="btn primary" id="copy">Copy link</button>
+      <button class="btn" id="close-share">Close</button>
+    </div>
+  </dialog>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <script type="module" src="assets/place.js"></script>
+</body>
+</html>

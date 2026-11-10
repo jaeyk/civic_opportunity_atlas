@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About the data · Civic Opportunity Atlas</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header"></header>
+  <main class="wrap" style="max-width:760px">
+    <section class="place-head">
+      <h1>About the data</h1>
+      <p class="lede muted">What this site shows, how to read it, and what it can't tell you.</p>
+    </section>
+
+    <h2>Who this is for</h2>
+    <p>Foundations deciding where and how to invest in civic life; universities building community partnerships; state and local governments planning civic engagement strategy; and organizers who want to understand their community and bring others into the conversation. Community members are reached through all of them, by shared links, printed profiles, and conversation guides.</p>
+
+    <h2>What "civic opportunity" means here</h2>
+    <p>A nonprofit organization offers a civic opportunity if its website shows at least one of four ways for people to take part:</p>
+    <ul>
+      <li><b>Membership:</b> people can join.</li>
+      <li><b>Volunteering:</b> people can give their time.</li>
+      <li><b>Public events:</b> gatherings open to the community.</li>
+      <li><b>Civic and political action:</b> advocacy, organizing, voter engagement, and similar activities.</li>
+    </ul>
+    <p>Each organization is also assigned one of 15 kinds (religious, youth, arts and cultural, community, social and fraternal, education, healthcare, economic, housing, professional, unions, foundations, hobby and sports, research and think tanks, and political) by a model trained on organizations' own descriptions. When no kind could be identified, the site shows it as <b>"Type not identified"</b>. It never leaves these organizations out, so the numbers always add up.</p>
+
+    <h2>How to read the numbers</h2>
+    <ul>
+      <li><b>Counts</b> are numbers of organizations. Local chapters of the same national network in one place count once.</li>
+      <li><b>Per 10,000 residents</b> rates are smoothed. Very small places get pulled toward the national rate so a handful of organizations doesn't produce an extreme number.</li>
+      <li><b>Similar places</b> are the 10 places most like this one in population size, rurality, poverty, education, broadband access, unemployment, single-parent households, and racial and ethnic makeup. They are never matched on civic opportunity itself.</li>
+      <li><b>More / fewer than similar places</b> means at least a third more, or a quarter fewer, per resident than the typical similar place. For a single kind of organization the bar is higher (twice as many, or half). A comparison needs about five organizations on one side; below that the site says the numbers are too small.</li>
+      <li><b>Confidence</b> on each observation reflects how many organizations it rests on and how many have no identified type.</li>
+    </ul>
+
+    <h2>What the data can't tell you</h2>
+    <ul>
+      <li><b>What a community wants or needs.</b> Fewer organizations listing something isn't the same as people wanting more of it. That's what the conversation guides are for.</li>
+      <li><b>Activity offline.</b> Organizations without websites, or that don't mention an opportunity online, count as not offering it.</li>
+      <li><b>Informal civic life.</b> Neighbors, mutual aid, congregations without nonprofit records, schools, and local government aren't captured.</li>
+      <li><b>Change or impact.</b> The data is one snapshot. It can't show trends or whether any program made a difference.</li>
+      <li><b>Specific organizations.</b> Records are de-identified (no names, tax IDs, or street addresses), so the site shows kinds of organizations only. Organizations that use a P.O. box as their mailing address are left out, because their location is uncertain.</li>
+    </ul>
+
+    <h2>More questions about the data?</h2>
+    <p>The data, methods, and validation are documented in full elsewhere:</p>
+    <ul>
+      <li><a href="https://www.nature.com/articles/s41597-025-05353-6">Data paper</a>: Kim, J.Y., de Vries, M., &amp; Han, H. (2025). MapAgora, civic opportunity datasets for the study of American local politics and public policy. <i>Scientific Data</i>, 12, 1162.</li>
+      <li><a href="https://doi.org/10.7910/DVN/IRCA7C">Harvard Dataverse</a> and <a href="https://github.com/snfagora/american_civic_opportunity_datasets">GitHub</a>: the datasets and code.</li>
+      <li><a href="https://snfagora.github.io/modern_agora_dashboard/#about">Mapping the Modern Agora</a>: the research project, its findings, and papers.</li>
+      <li><a href="https://www.nature.com/articles/s41562-023-01743-1">de Vries, Kim &amp; Han (2024)</a>, "The unequal landscape of civic opportunity in America," <i>Nature Human Behaviour</i>.</li>
+    </ul>
+
+    <h2 id="cite">How to cite</h2>
+    <p class="panel">Kim, J.Y., de Vries, M., &amp; Han, H. (2025). MapAgora, civic opportunity datasets for the study of American local politics and public policy. <i>Scientific Data</i>, 12, 1162. https://doi.org/10.1038/s41597-025-05353-6. Data: https://doi.org/10.7910/DVN/IRCA7C.</p>
+
+    <h2>Who made this</h2>
+    <p><a href="https://jaeyk.github.io/">Jae Yeon Kim</a> (UNC Chapel Hill) and <a href="https://snfagora.jhu.edu/person/milan-de-vries/">Milan de Vries</a> (SNF Agora Institute, Johns Hopkins University). The MapAgora data was built at the SNF Agora Institute. Contact: <a href="mailto:jaekim@unc.edu">jaekim@unc.edu</a>.</p>
+    <p class="muted" id="built"></p>
+  </main>
+  <footer class="site-footer"></footer>
+  <script type="module">
+    import { chrome, getJSON } from "./assets/common.js";
+    chrome("about.html");
+    getJSON("data/meta.json").then((m) => { document.getElementById("built").textContent = `Site data built ${m.built}.`; });
+  </script>
+</body>
+</html>

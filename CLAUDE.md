@@ -49,7 +49,9 @@ Planned features:
 .venv/bin/pip install -r requirements.txt
 ./get_full_data.sh                      # fetch org/ZIP-level data into raw_data/mapagora_full/
 .venv/bin/python -m pipeline.build      # build tables -> data/processed/ (~1 min)
-.venv/bin/python -m pytest tests        # unit tests + checks on built tables
+.venv/bin/python -m pipeline.site_data # site data -> docs/data/ (place, state, search JSON; ~1 min)
+.venv/bin/python -m pytest tests        # unit tests + checks on built tables + site-text rules
+./preview.sh [--build]                  # local preview of docs/ at http://localhost:8000
 ```
 
 ## Pipeline (`pipeline/`)
@@ -57,6 +59,14 @@ Planned features:
 - `providers.py` is the core: from the org-level file, compute place × org type × opportunity counts ("what kinds, how much, by whom").
 - `metrics.py` (Empirical Bayes rates, percentiles), `peers.py` (10 nearest places on context: log population, RUCC, SVI measures; never on civic outcomes), `clusters.py` (LISA cold/hot spots), `geography.py` (ZIP→county crosswalk, rurality), `sources.py` (loaders + cached Census downloads), `build.py` (orchestration, writes parquet + `build_meta.json`).
 - Civic deserts were deliberately removed (user decision). Don't reintroduce them.
+
+## Website (`docs/`)
+
+- Plain HTML + ES-module JS + one CSS file; no framework, no build step for the front end. Pages: `index.html` (landing, audience doors), `place.html?id=` (c+FIPS or z+ZIP), `guide.html?id=` (printable conversation guide), `state.html?st=` (jurisdiction view: scatter, sortable table, CSV), `area.html?ids=` (combine places), `about.html`.
+- `pipeline/site_data.py` writes one JSON per place plus state files and a search index into `docs/data/`. All generated sentences (findings, observation cards, questions) are written there, and `tests/test_site_data.py` checks them for forbidden claims. Change wording in Python, not in JS.
+- The shading rule (`compareClass` in `docs/assets/common.js`) mirrors `MIN_COUNT` and the ratio bands in `site_data.py`; keep them in sync.
+- `docs/data/` is committed (Pages needs it): about 146 MB raw, so every data rebuild adds history. Rebuild only when data or text rules change.
+- The site name "Civic Opportunity Atlas" is a placeholder until the user picks one.
 
 ## Data
 

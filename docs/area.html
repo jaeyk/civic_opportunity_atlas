@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build an area · Civic Opportunity Atlas</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header"></header>
+  <main class="wrap">
+    <section class="place-head">
+      <h1>Build an area</h1>
+      <p class="section-intro">Combine ZIP codes or counties into one area, such as the neighborhoods around a campus, a city, or a service region, and see its combined profile. The link updates as you go, so you can bookmark or share it.</p>
+      <div class="for-banner hidden" id="for"></div>
+      <div class="search no-print">
+        <input id="q" type="search" autocomplete="off" placeholder="Add a ZIP code, town, or county" aria-label="Add a place to the area">
+      </div>
+      <div class="chips" id="chips"></div>
+      <p class="muted" id="warn"></p>
+    </section>
+
+    <div id="empty" class="note">Add at least one place to see the area's profile. Tip: type a town name to see its ZIP codes.</div>
+
+    <div id="content" class="hidden">
+      <div class="actions no-print">
+        <button class="btn primary" id="print">Print</button>
+        <button class="btn" id="copy">Copy link to this area</button>
+      </div>
+      <div class="stats" id="stats"></div>
+
+      <section aria-labelledby="h-grid">
+        <h2 id="h-grid">Who provides what in this area</h2>
+        <p class="section-intro" id="grid-note"></p>
+        <div class="grid-scroll"><table class="wpw" id="grid"></table></div>
+        <div class="legend" id="legend"></div>
+      </section>
+
+      <section aria-labelledby="h-parts">
+        <h2 id="h-parts">Places in this area</h2>
+        <div class="table-scroll"><table class="data" id="parts"></table></div>
+      </section>
+
+      <p class="muted" style="margin-top:1.5rem">Areas combine counts and residents across the places you add. Comparisons with the state use the state's overall rate for each kind of organization and opportunity. Questions about the data: see <a href="about.html">About the data</a> and the <a href="https://www.nature.com/articles/s41597-025-05353-6">data paper</a>.</p>
+    </div>
+  </main>
+  <footer class="site-footer"></footer>
+  <script type="module" src="assets/area.js"></script>
+</body>
+</html>

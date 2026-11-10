@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Explore a state · Civic Opportunity Atlas</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header"></header>
+  <main class="wrap">
+    <section class="place-head">
+      <h1>Explore a state</h1>
+      <p class="section-intro">Every county or ZIP code in a state: how many organizations list ways to get involved, how that compares with similar places, and local conditions alongside. Click any place for its full profile.</p>
+      <div class="for-banner hidden" id="for"></div>
+      <div class="controls">
+        <label>State<select id="st"></select></label>
+        <label>Show<select id="level"><option value="counties">Counties</option><option value="zips">ZIP codes</option></select></label>
+        <label>Area type<select id="rural"><option value="">All</option><option>Metro</option><option>Small town</option><option>Rural</option></select></label>
+        <label>Less common than in similar places
+          <select id="below">
+            <option value="">Show all places</option>
+            <option value="vs_any">Any way to get involved</option>
+            <option value="vs_membership">Membership</option>
+            <option value="vs_volunteer">Volunteering</option>
+            <option value="vs_events">Public events</option>
+            <option value="vs_take_action">Civic &amp; political action</option>
+          </select></label>
+        <label>Name contains<input type="text" id="name" placeholder="Filter by name"></label>
+      </div>
+    </section>
+
+    <div class="stats" id="stats"></div>
+
+    <section aria-labelledby="h-scatter">
+      <h2 id="h-scatter">Opportunity and poverty</h2>
+      <p class="section-intro">Each dot is a place: across, the share of residents below 150% of the poverty line; up, organizations listing a way to get involved per 10,000 residents (smoothed). <span id="flag-note"></span></p>
+      <div class="panel scatter" id="scatter"></div>
+    </section>
+
+    <section aria-labelledby="h-table">
+      <h2 id="h-table">All places</h2>
+      <p class="section-intro">"vs. similar places" is this place's rate divided by the median of its 10 most similar places: 1.0× is typical, 0.5× is half. Blank means too small to compare. Click a column to sort.</p>
+      <div class="actions no-print" style="margin:0 0 10px"><button class="btn" id="csv">Download this list (CSV)</button><span class="muted" id="count" style="align-self:center"></span></div>
+      <div class="table-scroll"><table class="data" id="table"></table></div>
+    </section>
+  </main>
+  <footer class="site-footer"></footer>
+  <script type="module" src="assets/state.js"></script>
+</body>
+</html>
