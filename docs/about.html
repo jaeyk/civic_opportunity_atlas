@@ -45,6 +45,17 @@
       <li><b>Specific organizations.</b> Records are de-identified (no names, tax IDs, or street addresses), so the site shows kinds of organizations only. Organizations that use a P.O. box as their mailing address are left out, because their location is uncertain.</li>
     </ul>
 
+    <h2 id="sources">Data sources</h2>
+    <ul>
+      <li><b>Civic opportunity and organization types:</b> MapAgora datasets (Kim, de Vries &amp; Han 2025), <a href="https://doi.org/10.7910/DVN/IRCA7C">doi:10.7910/DVN/IRCA7C</a>. MapAgora is built from the IRS Exempt Organizations Business Master File, IRS Form 990 filings, and text from organizations' websites. Counts on this site are recomputed from MapAgora's de-identified organization-level file using the same rules as its published county and ZIP code files.</li>
+      <li><b>Population and community conditions</b> (poverty, broadband, education, unemployment, single-parent households, racial and ethnic minority share): U.S. Census Bureau, <a href="https://www.census.gov/programs-surveys/acs">American Community Survey</a> 2017–2021 5-year estimates, as included in MapAgora.</li>
+      <li><b>Metro, small town, and rural labels:</b> U.S. Department of Agriculture, Economic Research Service, <a href="https://www.ers.usda.gov/data-products/rural-urban-continuum-codes/">Rural-Urban Continuum Codes</a> (2013), from its county classifications file. Codes 1–3 are shown as metro, 4–7 as small town, and 8–9 as rural. A ZIP code takes the label of its county.</li>
+      <li><b>ZIP codes and their counties:</b> U.S. Census Bureau, <a href="https://www.census.gov/geographies/reference-files/time-series/geo/relationship-files.2020.html">2020 ZCTA-to-county relationship file</a>. Each ZIP code is assigned to the county holding most of its land.</li>
+      <li><b>Boundaries</b> (used to find neighboring places, not drawn on this site): U.S. Census Bureau <a href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html">cartographic boundary files</a> for counties, states, and 2020 ZIP Code Tabulation Areas.</li>
+      <li><b>Town names for ZIP codes:</b> the most common mailing city among the organizations in each ZIP code, from the IRS records in MapAgora.</li>
+    </ul>
+    <p class="muted">QR codes are drawn with <a href="https://github.com/davidshimjs/qrcodejs">qrcode.js</a> (MIT License).</p>
+
     <h2>More questions about the data?</h2>
     <p>The data, methods, and validation are documented in full elsewhere:</p>
     <ul>

@@ -259,3 +259,4 @@ dialog::backdrop { background: rgba(0, 0, 0, .35); }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 .print-only { display: none; }
+.source { font-size: .85rem; margin: .6rem 0 0; }

@@ -95,6 +95,7 @@ export function chrome(current) {
         <h3>On this site</h3>
         <ul>
           <li><a href="about.html">About the data and its limits</a></li>
+          <li><a href="about.html#sources">Data sources</a></li>
           <li><a href="about.html#cite">How to cite</a></li>
         </ul>
       </div>
@@ -169,7 +170,6 @@ export function attachSearch(input, onPick) {
 }
 
 export const placeURL = (id) => `place.html?id=${id}`;
-
 // ---- comparison shading ------------------------------------------------------------
 // A count here vs. the count expected from a comparison rate (per 10,000) for this
 // population. Same rule as pipeline/site_data.py: needs ~5+ organizations on one side.

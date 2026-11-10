@@ -67,6 +67,14 @@ GitHub Pages serves the `docs/` folder on `main` (Settings → Pages → Deploy 
 
 Organization records are de-identified. There are no names, EINs or street addresses; the finest location is the ZIP code.
 
+**Other sources used by the site**
+
+- Population and community conditions: U.S. Census Bureau, [American Community Survey](https://www.census.gov/programs-surveys/acs) 2017–2021 5-year estimates (included in MapAgora)
+- Metro / small town / rural: USDA Economic Research Service, [Rural-Urban Continuum Codes](https://www.ers.usda.gov/data-products/rural-urban-continuum-codes/) (2013), `raw_data/County_Classifications.csv`
+- ZIP-to-county assignment: U.S. Census Bureau, [2020 ZCTA-to-county relationship file](https://www.census.gov/geographies/reference-files/time-series/geo/relationship-files.2020.html)
+- Boundaries (pipeline only): U.S. Census Bureau [cartographic boundary files](https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html) for counties, states, and 2020 ZCTAs
+- QR codes: [qrcode.js](https://github.com/davidshimjs/qrcodejs) (MIT License)
+
 ## Team
 
 - [Jae Yeon Kim](https://jaeyk.github.io/), University of North Carolina at Chapel Hill
