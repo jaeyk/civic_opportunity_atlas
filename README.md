@@ -71,6 +71,7 @@ Organization records are de-identified. There are no names, EINs or street addre
 
 - [Jae Yeon Kim](https://jaeyk.github.io/), University of North Carolina at Chapel Hill
 - [Milan de Vries](https://snfagora.jhu.edu/person/milan-de-vries/), SNF Agora Institute, Johns Hopkins University
+- [Hahrie Han](https://www.hahriehan.com/), SNF Agora Institute, Johns Hopkins University
 
 ## Contact
 
