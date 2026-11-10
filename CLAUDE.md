@@ -4,19 +4,21 @@ Guidance for Claude Code when working in this repository.
 
 ## Project direction
 
-A static civic engagement tool that meets people where they are: residents, organizers, universities, state and local governments, and foundations learn the structure of civic opportunity in their county and ZIP code (what kinds of opportunity exist, to what extent, and provided by what kinds of organizations) and find strategies that worked in similar places. Built on the MapAgora datasets (SNF Agora Institute, Johns Hopkins).
+A static civic engagement tool that meets people where they are: residents, organizers, universities, state and local governments, and foundations learn the structure of civic opportunity in their county and ZIP code (what kinds of opportunity exist, to what extent, and provided by what kinds of organizations), compare with similar places, and use that to start conversations. Built on the MapAgora datasets (SNF Agora Institute, Johns Hopkins).
 
 **Learning, not polling.** Voting is not part of the plan (user decision); don't emphasize or add it. **No moderator role:** the public never submits free text (no posts, comments or user listings). So the site is fully static: no accounts, no database, no Firebase.
 
-Place page structure (reads top to bottom): plain-language findings → who provides what (org type × opportunity grid vs. peers) → compared with places like yours (10 peers) → action cards (gap, local org types that could fill it, curated strategies) → print the profile / conversation guide.
+Place page structure (reads top to bottom): plain-language findings → who provides what (org type × opportunity grid vs. peers) → compared with places like yours (10 peers) → observation cards → print the profile / conversation guide.
+
+**Observation cards, not action cards.** Claim only what the data supports. Each card has (1) a comparison with peers in plain words ("fewer youth organizations here list civic action on their websites than in 10 similar places"), (2) how confident we can be (number of organizations behind it, share untyped), (3) a discussion question that hands the "why" and "what next" to the community. Never say a gap is a "need", never suggest specific partners (data is de-identified, and 0 means "no evidence on its website", not "doesn't offer it"), and never claim a strategy "worked" (MapAgora is one snapshot with no outcomes).
 
 Planned features:
 - Entry by ZIP code or town name; optional "What are you trying to do?" paths per audience (find partners, decide where to invest, site a program, find who to organize with).
 - Area profiles: any set of ZIPs/counties (campus neighborhood, city, service region); selection lives in the URL.
 - Equity view: opportunity against poverty, broadband, education, minority share.
 - Gap ranking with filters; CSV and GeoJSON export.
-- "Present but inactive" organization types (present, offering nothing): potential partners.
-- Curated strategy library: written by the team as files in the repo, tagged by place context.
+- Organization types present locally that list no opportunity online: show as a fact with the website caveat, not as "potential partners".
+- Optional, separate from the data: curated examples written and sourced by the team as repo files, labeled as examples, not evidence.
 - Printable one-page profile, a conversation guide (discussion questions generated from the place's findings), a QR code per place, and an embeddable widget.
 - Meeting people where they are: phone-first, small pages, works on slow connections, plain language, Spanish next.
 

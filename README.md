@@ -1,10 +1,10 @@
 # MapAgora Community Tool
 
-A web tool, in development, that helps community members:
+A static web tool, in development, that meets people where they are. It helps residents, organizers, universities, state and local governments, and foundations:
 
-1. **Learn** how civic opportunity is structured in their county and ZIP code: what kinds of opportunity exist (membership, volunteering, public events, civic and political action), to what extent, and which kinds of organizations provide them, compared with similar places.
-2. **Suggest and vote** on the kinds of community engagement opportunities their community needs.
-3. **Share strategies** that worked in one community with others.
+1. **Learn** how civic opportunity is structured in their county and ZIP code: what kinds of opportunity exist (membership, volunteering, public events, civic and political action), to what extent, and which kinds of organizations provide them.
+2. **Compare** with similar places, through plain-language observations that state how confident the data lets us be.
+3. **Start conversations**: printable profiles and discussion guides built from each place's own findings.
 
 It is built on the MapAgora datasets from the [SNF Agora Institute](https://snfagora.jhu.edu/) at Johns Hopkins University.
 
