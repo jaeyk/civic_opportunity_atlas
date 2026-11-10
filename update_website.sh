@@ -13,7 +13,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 PY="$ROOT/.venv/bin/python"
-[ -x "$PY" ] || PY="python3"
+if [ ! -x "$PY" ]; then
+  echo "No project environment found at .venv. Create it first:"
+  echo "  python3 -m venv .venv && .venv/bin/pip install -r requirements.txt"
+  exit 1
+fi
 
 BUILD=0
 MSG="Update website"
