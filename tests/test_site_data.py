@@ -47,3 +47,23 @@ def test_grid_matches_totals():
     col = S.OPPS.index("Any civic opportunity")
     for rec in _sample(300):
         assert sum(row[col] for row in rec["grid"]["n"]) == rec["totals"]["any_opp"]
+
+
+def test_type_files_add_up_to_state_totals():
+    """The state view's type filter: typed counts + untyped = each state's totals."""
+    state = S.DATA / "s" / "CA.json"
+    if not (S.DATA / "s" / "t").exists() or not state.exists():
+        pytest.skip("run `python -m pipeline.site_data` first")
+    s = json.loads(state.read_text())
+    counties = {r[0] for r in s["counties"]}
+    untyped = S.TYPES.index(S.UNCLASSIFIED)
+    for k, col in (("orgs", S.OPPS.index(S.ALL_ORGS)), ("any_opp", S.OPPS.index("Any civic opportunity"))):
+        total = s["grid_n"][untyped][col]
+        for i, _ in enumerate(S.TYPES):
+            f = S.DATA / "s" / "t" / f"CA-{i}.json"
+            if i == untyped or not f.exists():
+                continue
+            t = json.loads(f.read_text())
+            j = t["columns"].index(k)
+            total += sum(v[j] for pid, v in t["rows"].items() if pid in counties)
+        assert total == s["totals"][k], k

@@ -62,7 +62,8 @@ export const getState = (st) => getJSON(`data/s/${st}.json`);
 export const fmt = (n, d = 0) =>
   n == null || Number.isNaN(n) ? "–" : Number(n).toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
 export const pct = (n) => (n == null ? "–" : `${fmt(n, 0)}%`);
-export const ratioText = (r) => (r == null ? "–" : `${r.toFixed(r >= 10 ? 0 : 1)}×`);
+// Infinity: some here, none expected from similar places
+export const ratioText = (r) => (r == null ? "–" : !Number.isFinite(r) ? "more (0 expected)" : `${r.toFixed(r >= 10 ? 0 : 1)}×`);
 export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 export const param = (k) => new URLSearchParams(location.search).get(k);
 
@@ -170,6 +171,52 @@ export function attachSearch(input, onPick) {
 }
 
 export const placeURL = (id) => `place.html?id=${id}`;
+
+// ---- organization-type picker ----------------------------------------------------
+// A dropdown of checkboxes: "All kinds" (the default) or any mix of types, whose
+// counts are added together. Selection is kept in the URL as ?types=Youth,Education.
+export const UNTYPED = "Type not identified";
+export function typesFromURL(types) {
+  const want = (param("types") || "").split(",").filter(Boolean);
+  return types.map((t, i) => [t, i]).filter(([t]) => t !== UNTYPED && want.includes(t)).map(([, i]) => i);
+}
+export function typesToURL(u, types, picked) {
+  if (picked.length) u.searchParams.set("types", picked.map((i) => types[i]).join(",")); else u.searchParams.delete("types");
+}
+export function typePicker(el, types, picked, onChange) {
+  const opts = types.map((t, i) => [t, i]).filter(([t]) => t !== UNTYPED);
+  el.classList.add("type-picker");
+  el.innerHTML = `<summary></summary><div class="type-menu" role="group" aria-label="Kinds of organization">
+    <label><input type="checkbox" data-all> All kinds (total)</label><hr>
+    ${opts.map(([t, i]) => `<label><input type="checkbox" value="${i}"> ${esc(t)}</label>`).join("")}
+    <p class="muted">Pick one kind, or several to add them together.</p></div>`;
+  const all = el.querySelector("[data-all]"), boxes = [...el.querySelectorAll("input[value]")];
+  const sync = () => {
+    all.checked = picked.length === 0;
+    boxes.forEach((b) => { b.checked = picked.includes(+b.value); });
+    el.querySelector("summary").textContent = typeLabel(types, picked);
+  };
+  all.addEventListener("change", () => { picked = []; sync(); onChange(picked); });
+  boxes.forEach((b) => b.addEventListener("change", () => {
+    picked = boxes.filter((x) => x.checked).map((x) => +x.value);
+    sync(); onChange(picked);
+  }));
+  document.addEventListener("click", (e) => { if (!el.contains(e.target)) el.open = false; });
+  sync();
+}
+export function typeLabel(types, picked) {
+  if (!picked.length) return "All kinds (total)";
+  if (picked.length <= 2) return picked.map((i) => types[i]).join(" + ");
+  return `${picked.length} kinds combined`;
+}
+// "youth organizations", "youth and education organizations", "organizations of 3 kinds"
+export function typeNoun(meta, picked) {
+  if (!picked.length) return "organizations";
+  const ph = picked.map((i) => meta.type_phrases[meta.types[i]] || meta.types[i].toLowerCase());
+  if (ph.length === 1) return `${ph[0]} organizations`;
+  if (ph.length === 2) return `${ph[0]} and ${ph[1]} organizations`;
+  return `organizations of the ${ph.length} chosen kinds`;
+}
 // ---- comparison shading ------------------------------------------------------------
 // A count here vs. the count expected from a comparison rate (per 10,000) for this
 // population. Same rule as pipeline/site_data.py: needs ~5+ organizations on one side.

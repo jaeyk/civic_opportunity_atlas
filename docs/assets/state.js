@@ -1,4 +1,5 @@
-import { chrome, audienceBanner, getJSON, getState, param, fmt, pct, ratioText, esc, placeURL, tip, downloadCSV } from "./common.js";
+import { chrome, audienceBanner, getJSON, getState, param, fmt, pct, ratioText, esc, placeURL, tip, downloadCSV,
+  UNTYPED, typePicker, typesFromURL, typesToURL, typeLabel, typeNoun } from "./common.js";
 
 chrome("state.html");
 audienceBanner(document.getElementById("for"));
@@ -13,10 +14,13 @@ const FEWER = 0.75;
 // with a couple of organizations don't dominate the map.
 const COUNT_FOR = { vs_any: "any_opp", vs_membership: "membership", vs_volunteer: "volunteer", vs_events: "events", vs_take_action: "take_action" };
 const MIN_COUNT = 5;
+// With kinds of organization picked, rows carry the expected count (_exp) directly:
+// the place's count is compared with similar places' typical rate x its population.
 function band(r, m) {
   const ratio = r ? r[m] : null;
   if (ratio == null) return ["none", "Too few to compare"];
-  const n = r[COUNT_FOR[m]] ?? 0, expected = ratio > 0 ? n / ratio : 0;
+  const n = r[COUNT_FOR[m]] ?? 0;
+  const expected = r._exp ? r._exp[m] : ratio > 0 ? n / ratio : 0;
   if (Math.max(n, expected) < MIN_COUNT) return ["none", "Too few to compare"];
   if (ratio >= 1.33) return ["more-1", "More than similar places"];
   if (ratio <= 0.75) return ["fewer-1", "Fewer than similar places"];
@@ -26,7 +30,7 @@ function band(r, m) {
 const COLS = [
   { key: "label", label: "Place", fmt: (v, r) => `<a href="${placeURL(r.id)}">${esc(v)}</a>` },
   { key: "population", label: "Residents", fmt: (v) => fmt(v) },
-  { key: "orgs", label: "Organizations", fmt: (v) => fmt(v) },
+  { key: "orgs", label: "Organizations", typedLabel: "Organizations of the chosen kinds", fmt: (v) => fmt(v) },
   { key: "any_opp", label: "Listing a way to get involved", fmt: (v) => fmt(v) },
   { key: "rate_any", label: "Per 10,000 residents", fmt: (v) => fmt(v, 1) },
   { key: "vs_any", label: "vs. similar places", fmt: ratioText },
@@ -39,10 +43,13 @@ const COLS = [
   { key: "rurality", label: "Area type", fmt: (v) => esc(v ?? "–") },
 ];
 
-let data = null, all = [], rows = [], sort = { key: "population", dir: -1 };
+let data = null, meta = null, all = [], rows = [], sort = { key: "population", dir: -1 };
+let picked = [];          // indices into meta.types; empty = all kinds (the total)
+const TYPE_KEYS = ["any_opp", "membership", "volunteer", "events", "take_action"];
+const VS_KEY = { any_opp: "vs_any", membership: "vs_membership", volunteer: "vs_volunteer", events: "vs_events", take_action: "vs_take_action" };
 
 async function init() {
-  const meta = await getJSON("data/meta.json");
+  meta = await getJSON("data/meta.json");
   const st = (param("st") || "CA").toUpperCase();   // default: California
   $("st").innerHTML = meta.states.map((s) => `<option value="${s}"${s === st ? " selected" : ""}>${STATE_NAMES[s] || s}</option>`).join("");
   if (param("level") === "zips") $("level").value = "zips";
@@ -50,8 +57,10 @@ async function init() {
   if (param("measure")) $("measure").value = param("measure");
   if (param("below")) { $("measure").value = param("below"); $("only").checked = true; }   // older links
   if (param("only") === "1") $("only").checked = true;
+  picked = typesFromURL(meta.types);
+  typePicker($("types"), meta.types, picked, async (p) => { picked = p; await buildRows(); update(false); });
   $("st").addEventListener("change", load);
-  $("level").addEventListener("change", () => { buildRows(); update(true); });
+  $("level").addEventListener("change", async () => { await buildRows(); update(true); });
   for (const id of ["rural", "measure", "only"]) $(id).addEventListener("change", () => update(id === "measure"));
   $("name").addEventListener("input", () => update(false));
   $("csv").addEventListener("click", exportCSV);
@@ -61,16 +70,47 @@ async function init() {
 
 async function load() {
   data = await getState($("st").value);
-  buildRows();
+  await buildRows();
   update(true);
 }
 
-function buildRows() {
+async function buildRows() {
   const level = $("level").value, cols = data.columns;
+  const st = $("st").value;
+  // Per-type files are small and fetched only for the kinds picked; a state with no
+  // organizations of a kind has no file (all zeros).
+  const files = await Promise.all(picked.map((i) => getJSON(`data/s/t/${st}-${i}.json`).catch(() => ({ rows: {} }))));
   all = data[level].map((a) => {
     const r = Object.fromEntries(cols.map((c, i) => [c, a[i]]));
     r.label = level === "zips" ? `${r.name}${r.town ? " · " + r.town : ""}` : r.name;
+    if (picked.length) applyTypes(r, files);
     return r;
+  });
+}
+
+// Replace a row's totals with the sum over the chosen kinds of organization.
+// Columns per file row: 5 opportunity counts, all orgs of the kind, 5 peer medians per 10,000.
+function applyTypes(r, files) {
+  const sum = Array(11).fill(0);
+  let peers = false;
+  for (const f of files) {
+    const v = f.rows[r.id];
+    if (!v) continue;
+    v.forEach((x, k) => { if (x != null) { sum[k] += x; if (k >= 6) peers = true; } });
+  }
+  const pop = r.population || 0;
+  const comparable = pop >= (meta.min_pop || 100) && r.vs_any != null;   // same places the totals compare
+  TYPE_KEYS.forEach((k, j) => { r[k] = sum[j]; });
+  r.orgs = sum[5];
+  r.rate_any = pop ? (sum[0] / pop) * 10000 : null;
+  r.pctile_any = null;
+  r._exp = {};
+  TYPE_KEYS.forEach((k, j) => {
+    const vs = VS_KEY[k];
+    if (!comparable || !peers) { r[vs] = null; return; }
+    const expected = (sum[6 + j] * pop) / 10000;
+    r._exp[vs] = expected;
+    r[vs] = expected > 0 ? sum[j] / expected : sum[j] > 0 ? Infinity : null;
   });
 }
 
@@ -85,7 +125,7 @@ function takeaway() {
   const low = med(ok.slice(0, q)), high = med(ok.slice(-q));
   const r = high / low;
   const how = r < 0.85 ? "fewer" : r > 1.15 ? "more" : "about as many";
-  return `In ${st}, the quarter of ${unit} with the most poverty have ${how} organizations listing a way to get involved per resident (typically ${fmt(high, 1)} per 10,000) than the quarter with the least poverty (${fmt(low, 1)}).`;
+  return `In ${st}, the quarter of ${unit} with the most poverty have ${how} ${typeNoun(meta, picked)} listing a way to get involved per resident (typically ${fmt(high, 1)} per 10,000) than the quarter with the least poverty (${fmt(low, 1)}).`;
 }
 
 function filtered() {
@@ -101,22 +141,45 @@ function update(redrawMap) {
     if (v && !(k === "level" && v === "counties") && !(k === "measure" && v === "vs_any")) u.searchParams.set(k, v); else u.searchParams.delete(k);
   }
   u.searchParams.delete("below");
+  typesToURL(u, meta.types, picked);
   if ($("only").checked) u.searchParams.set("only", "1"); else u.searchParams.delete("only");
   history.replaceState(null, "", u);
 
   const keep = filtered(), m = $("measure").value;
   rows = all.filter((r) => keep(r) && (!$("only").checked || band(r, m)[0] === "fewer-1"));
-  const st = $("st").value, t = data.totals;
+  const st = $("st").value, t = stateTotals(), noun = typeNoun(meta, picked);
   $("stats").innerHTML = [
     [fmt(data.population), `residents in ${STATE_NAMES[st] || st}`],
-    [fmt(t.orgs), "nonprofit organizations"],
+    [fmt(t.orgs), picked.length ? noun : "nonprofit organizations"],
     [fmt(t.any_opp), "list a way to get involved"],
     [fmt((t.any_opp / data.population) * 10000, 1), "per 10,000 residents"],
   ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  typeNote();
+  $("map-noun").textContent = noun;
   $("takeaway").textContent = takeaway();
   $("map-measure").textContent = MEASURE_WORDS[m];
   if (redrawMap) drawMap(); else restyleMap();
   drawTable();
+}
+
+// State totals for the chosen kinds (from the state's type x opportunity grid)
+function stateTotals() {
+  if (!picked.length) return data.totals;
+  const col = (name) => meta.opportunities.indexOf(name);
+  const s = (c) => picked.reduce((a, i) => a + data.grid_n[i][c], 0);
+  return { orgs: s(col("All organizations")), any_opp: s(col("Any civic opportunity")) };
+}
+
+function typeNote() {
+  const el = $("type-note");
+  el.classList.toggle("hidden", !picked.length);
+  if (!picked.length) return;
+  const u = meta.types.indexOf(UNTYPED), all = meta.opportunities.indexOf("All organizations");
+  const share = data.totals.orgs ? data.grid_n[u][all] / data.totals.orgs : 0;
+  const st = STATE_NAMES[$("st").value] || $("st").value;
+  el.textContent = `Showing ${typeLabel(meta.types, picked)}. In ${st}, ${Math.round(share * 100)}% of organizations have no identified type, `
+    + "so counts by kind leave some out. Each place is compared with similar places' typical level for the same kinds"
+    + (picked.length > 1 ? ", added together." : ".");
 }
 
 // ---- map --------------------------------------------------------------------------
@@ -161,7 +224,7 @@ async function drawMap() {
 function tipHTML(r, id) {
   if (!r) return "No data for this area";
   const m = $("measure").value, [, words] = band(r, m);
-  return `<b>${esc(r.label)}</b><br>${esc(MEASURE_WORDS[m][0].toUpperCase() + MEASURE_WORDS[m].slice(1))}: ${esc(words.toLowerCase())}${r[m] != null ? ` (${ratioText(r[m])})` : ""}<br>${fmt(r.any_opp)} of ${fmt(r.orgs)} organizations list a way to get involved`;
+  return `<b>${esc(r.label)}</b><br>${esc(MEASURE_WORDS[m][0].toUpperCase() + MEASURE_WORDS[m].slice(1))}: ${esc(words.toLowerCase())}${r[m] != null ? ` (${ratioText(r[m])})` : ""}<br>${fmt(r.any_opp)} of ${fmt(r.orgs)} ${typeNoun(meta, picked)} list a way to get involved`;
 }
 
 function restyleMap() {
@@ -188,7 +251,7 @@ function drawTable() {
   const shown = rows.slice(0, 500);
   $("count").textContent = `${fmt(rows.length)} places${rows.length > 500 ? " (showing 500; download for all)" : ""}`;
   $("table").innerHTML = `<thead><tr>${COLS.map((c) =>
-    `<th data-key="${c.key}"${c.key === key ? ` aria-sort="${dir > 0 ? "ascending" : "descending"}"` : ""} scope="col">${c.label}</th>`).join("")}</tr></thead>
+    `<th data-key="${c.key}"${c.key === key ? ` aria-sort="${dir > 0 ? "ascending" : "descending"}"` : ""} scope="col">${picked.length && c.typedLabel ? c.typedLabel : c.label}</th>`).join("")}</tr></thead>
     <tbody>${shown.map((r) => `<tr>${COLS.map((c) => `<td>${c.fmt(r[c.key], r)}</td>`).join("")}</tr>`).join("")}</tbody>`;
   $("table").querySelectorAll("th").forEach((th) => th.addEventListener("click", () => {
     sort = { key: th.dataset.key, dir: sort.key === th.dataset.key ? -sort.dir : (th.dataset.key === "label" ? 1 : -1) };
@@ -197,13 +260,14 @@ function drawTable() {
 }
 
 function exportCSV() {
-  const keys = ["id", "label", "county", "population", "rurality", "orgs", "any_opp", "rate_any", "pctile_any",
+  const kinds = picked.length ? picked.map((i) => meta.types[i]).join(" + ") : "All kinds";
+  const keys = ["kinds", "id", "label", "county", "population", "rurality", "orgs", "any_opp", "rate_any", "pctile_any",
     "vs_any", "vs_membership", "vs_volunteer", "vs_events", "vs_take_action", "POV150", "BROAD", "NOHSDP", "UNEMP", "REMNRTY", "SNGPNT"];
-  const header = ["place_id", "place", "county", "residents", "area_type", "organizations", "listing_any_opportunity",
-    "per_10k_smoothed", "national_percentile", "vs_similar_any", "vs_similar_membership", "vs_similar_volunteering",
+  const header = ["organization_kinds", "place_id", "place", "county", "residents", "area_type", "organizations", "listing_any_opportunity",
+    picked.length ? "per_10k" : "per_10k_smoothed", "national_percentile", "vs_similar_any", "vs_similar_membership", "vs_similar_volunteering",
     "vs_similar_events", "vs_similar_civic_action", "pct_below_150_poverty", "pct_no_broadband", "pct_no_hs_diploma",
     "pct_unemployed", "pct_minority", "pct_single_parent"];
-  downloadCSV(`civic-opportunity-${$("st").value}-${$("level").value}.csv`, header, rows.map((r) => keys.map((k) => r[k])));
+  downloadCSV(`civic-opportunity-${$("st").value}-${$("level").value}.csv`, header, rows.map((r) => keys.map((k) => (k === "kinds" ? kinds : Number.isFinite(r[k]) || typeof r[k] !== "number" ? r[k] : null))));
 }
 
 function debounce(fn, ms) { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; }

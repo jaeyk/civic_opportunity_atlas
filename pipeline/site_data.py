@@ -441,6 +441,36 @@ def state_rows(records: dict, level: str, towns: pd.Series) -> dict:
     return by_state
 
 
+TYPE_COLS = ["any_opp", "membership", "volunteer", "events", "take_action", "orgs",
+             "peer_any_opp", "peer_membership", "peer_volunteer", "peer_events", "peer_take_action"]
+
+
+def type_rows(records: dict) -> dict:
+    """{(state, type index): {place id: row}} for the state view's organization-type filter.
+
+    Each row is a place's counts for one type (TYPE_COLS: the five opportunities,
+    then all organizations of the type) and its peers' median per 10,000 residents
+    for each opportunity. The browser sums rows across the chosen types and compares
+    the count with peer rate x population, the same rule as the place-page grid.
+    Places with no organizations of the type and a peer median of 0 are left out
+    (the browser reads them as zeros).
+    """
+    opp_cols = [OPPS.index(MEASURES[k][0]) for k in MEASURES]
+    col_all = OPPS.index(ALL_ORGS)
+    out = {}
+    for rec in records.values():
+        g = rec["grid"]
+        for i, typ in enumerate(TYPES):
+            if typ == UNCLASSIFIED:
+                continue
+            n = [g["n"][i][j] for j in opp_cols] + [g["n"][i][col_all]]
+            peer = [g["peer"][i][j] for j in opp_cols]
+            if not any(n) and not any(peer):
+                continue
+            out.setdefault((rec["state"], i), {})[rec["id"]] = n + peer
+    return out
+
+
 def state_totals(county_records: dict) -> dict:
     """Population, totals, and type × opportunity counts summed over each state's counties."""
     out = {}
@@ -539,6 +569,13 @@ def main():
             "grid_n": s["grid_n"].tolist(), "columns": STATE_COLS,
             "counties": counties.get(st, []), "zips": zips.get(st, [])})
 
+    # Organization-type filter on the state view: one small file per state x type,
+    # fetched only for the types someone picks.
+    if (DATA / "s" / "t").exists():
+        shutil.rmtree(DATA / "s" / "t")
+    for (st, i), rows in type_rows(records).items():
+        write_json(DATA / "s" / "t" / f"{st}-{i}.json", {"columns": TYPE_COLS, "rows": rows})
+
     print("map shapes ...")
     write_shapes(records)
 
@@ -549,6 +586,7 @@ def main():
     nat = {k: sum(r["totals"][k] for r in county_recs.values()) for k in ["orgs", *MEASURES]}
     write_json(DATA / "meta.json", {
         "built": date.today().isoformat(), "types": TYPES, "opportunities": OPPS,
+        "type_phrases": TYPE_PHRASE,
         "measures": {k: v[0] for k, v in MEASURES.items()},
         "context": C.CONTEXT, "rate_per": C.RATE_PER, "min_pop": C.MIN_POP,
         "national": {"population": sum(r["population"] or 0 for r in county_recs.values()),

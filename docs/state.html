@@ -17,6 +17,7 @@
         <label>State<select id="st"></select></label>
         <label>Show<select id="level"><option value="counties">Counties</option><option value="zips">ZIP codes</option></select></label>
         <label>Area type<select id="rural"><option value="">All</option><option>Metro</option><option>Small town</option><option>Rural</option></select></label>
+        <div class="field"><span>Kinds of organization</span><details id="types"></details></div>
         <label>Color the map by
           <select id="measure">
             <option value="vs_any">Any way to get involved</option>
@@ -28,13 +29,14 @@
         <label>Name contains<input type="text" id="name" placeholder="Filter by name"></label>
         <label class="check"><input type="checkbox" id="only"> Only list places where this is less common than in similar places</label>
       </div>
+      <p class="type-note muted hidden" id="type-note"></p>
     </section>
 
     <div class="stats" id="stats"></div>
 
     <section aria-labelledby="h-map">
       <h2 id="h-map">Map</h2>
-      <p class="section-intro">Each place is shaded by how many organizations list <b id="map-measure">a way to get involved</b> per resident, compared with the 10 places most similar to it. Tap or hover for details; click to open a place.</p>
+      <p class="section-intro">Each place is shaded by how many <b id="map-noun">organizations</b> list <b id="map-measure">a way to get involved</b> per resident, compared with the 10 places most similar to it. Tap or hover for details; click to open a place.</p>
       <p class="takeaway" id="takeaway"></p>
       <div class="panel map" id="map"><p class="loading">Loading map…</p></div>
       <div class="legend" id="map-legend"></div>
