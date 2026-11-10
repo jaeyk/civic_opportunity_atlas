@@ -1,6 +1,19 @@
 # MapAgora Community Tool
 
-A static web tool, in development, that meets people where they are. It helps residents, organizers, universities, state and local governments, and foundations:
+A static web tool, in development, for civic engagement that meets people where they are.
+
+## Who it's for
+
+| Audience | What they're trying to do | What the tool gives them |
+|---|---|---|
+| **Foundations** | Decide where and how to invest in civic life | Places compared with similar places; profiles of a grant region or portfolio; exports for proposals and board decks |
+| **Universities** | Build community partnerships and engagement | A profile of the area around campus; which kinds of organizations offer which opportunities nearby; briefs for engagement reports |
+| **State and local governments** | Plan civic engagement strategy (e.g., a civic engagement office) | Every county or ZIP code in the jurisdiction, compared with peers and with poverty, broadband and education; GIS exports |
+| **Organizers** | Understand their community and bring others into the conversation | A plain-language profile of their place, a printable version, a conversation guide, and a QR code for flyers |
+
+**Community members** are who these audiences engage. The tool reaches them through shared links, printed profiles, and conversation guides that work on a phone or on paper.
+
+## What it does
 
 1. **Learn** how civic opportunity is structured in their county and ZIP code: what kinds of opportunity exist (membership, volunteering, public events, civic and political action), to what extent, and which kinds of organizations provide them.
 2. **Compare** with similar places, through plain-language observations that state how confident the data lets us be.
