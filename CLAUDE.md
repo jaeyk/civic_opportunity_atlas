@@ -52,6 +52,7 @@ Planned features:
 .venv/bin/python -m pipeline.site_data # site data -> docs/data/ (place, state, search JSON; ~1 min)
 .venv/bin/python -m pytest tests        # unit tests + checks on built tables + site-text rules
 ./preview.sh [--build]                  # local preview of docs/ at http://localhost:8000
+./update_website.sh [--build] [-m msg]  # on main: test, commit, push (publishes the site)
 ```
 
 ## Pipeline (`pipeline/`)

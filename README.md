@@ -53,7 +53,7 @@ python3 -m venv .venv
 
 ## Publishing
 
-GitHub Pages serves the `docs/` folder on `main` (Settings → Pages → Deploy from a branch → `main` / `/docs`). To publish changes: rebuild if the data changed, commit `docs/`, and push to `main`. There is no GitHub Actions workflow.
+GitHub Pages serves the `docs/` folder on `main` (Settings → Pages → Deploy from a branch → `main` / `/docs`). There is no GitHub Actions workflow. To publish, run `./update_website.sh` on `main` (add `--build` if the data or generated text changed). It runs the tests, commits, and pushes.
 
 ```bash
 ./preview.sh --build                    # rebuild everything and preview
