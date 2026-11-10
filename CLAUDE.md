@@ -62,9 +62,12 @@ Planned features:
 
 ## Website (`docs/`)
 
-- Plain HTML + ES-module JS + one CSS file; no framework, no build step for the front end. Pages: `index.html` (landing, audience doors), `place.html?id=` (c+FIPS or z+ZIP), `guide.html?id=` (printable conversation guide), `state.html?st=` (jurisdiction view: scatter, sortable table, CSV), `area.html?ids=` (combine places), `about.html`.
+- Plain HTML + ES-module JS + one CSS file; no framework, no build step for the front end. Pages: `index.html` (landing, audience doors), `place.html?id=` (c+FIPS or z+ZIP), `guide.html?id=` (printable conversation guide), `state.html?st=` (jurisdiction view: map of counties or ZIP codes shaded vs. similar places, a plain-language poverty takeaway, sortable table, CSV), `area.html?ids=` (combine places), `about.html`.
 - `pipeline/site_data.py` writes one JSON per place plus state files and a search index into `docs/data/`. All generated sentences (findings, observation cards, questions) are written there, and `tests/test_site_data.py` checks them for forbidden claims. Change wording in Python, not in JS.
 - The shading rule (`compareClass` in `docs/assets/common.js`) mirrors `MIN_COUNT` and the ratio bands in `site_data.py`; keep them in sync.
+- Map shapes: `site_data.write_shapes` writes simplified per-state GeoJSON to `docs/data/g/{ST}-c.json` / `{ST}-z.json`; drawn with d3 (cdnjs) in `state.js`, projection rotated to each state's centroid (Alaska crosses 180°). No point/scatter plots for general audiences: user found them too technical.
+- Learning design follows Learning Patterns by Tim Klapdor (CC BY-NC-ND 4.0): orientation (Look → Compare → Discuss path), teaser + reveal ("Guess first"), compare & contrast, interpret & evaluate, open-ended questions, shared meaning, reflection (six-step conversation guide). Credit it on about.html; name patterns and link, but never copy or adapt their text (ND license).
+- Every chart/table shows a short source line; full references live on about.html#sources (MapAgora, ACS 2017–2021, USDA ERS RUCC 2013, Census 2020 ZCTA-county file, Census boundaries).
 - `docs/data/` is committed (Pages needs it): about 146 MB raw, so every data rebuild adds history. Rebuild only when data or text rules change.
 - Site name: "Civic Opportunity Atlas" (confirmed; the repo is named after it).
 

@@ -23,17 +23,46 @@
 
       <section>
         <h2>How to use this guide</h2>
-        <p>Bring it to a meeting, class, or community gathering. Read a few of the facts aloud, then spend most of the time on the questions. The data describes what nonprofit organizations list online; the people in the room know the rest.</p>
+        <p>Bring it to a meeting, class, or community gathering. It moves in six short steps, from guessing to reflecting. The data describes what nonprofit organizations list online; the people in the room know the rest, so spend most of the time on steps 3 to 6.</p>
       </section>
 
       <section>
-        <h2>A few facts to start</h2>
+        <p class="eyebrow">Step 1 · Guess first</p>
+        <h2>Before looking at the data</h2>
+        <p>Ask everyone to jot down a guess. Don't reveal the answers yet.</p>
+        <ol id="guesses"></ol>
+      </section>
+
+      <section>
+        <p class="eyebrow">Step 2 · Reveal</p>
+        <h2>What the data shows</h2>
         <ul id="facts"></ul>
+        <p class="muted">How close were the guesses? What surprised people?</p>
       </section>
 
       <section>
-        <h2>Questions to discuss</h2>
+        <p class="eyebrow">Step 3 · Compare</p>
+        <h2>Compared with places like this one</h2>
+        <ul id="compare"></ul>
+        <ol id="compare-q"></ol>
+      </section>
+
+      <section>
+        <p class="eyebrow">Step 4 · Interpret</p>
+        <h2>What might explain it?</h2>
         <ol id="questions"></ol>
+      </section>
+
+      <section>
+        <p class="eyebrow">Step 5 · Find shared meaning</p>
+        <h2>What do we agree on?</h2>
+        <ol id="shared"></ol>
+      </section>
+
+      <section>
+        <p class="eyebrow">Step 6 · Reflect</p>
+        <h2>Looking back, looking ahead</h2>
+        <ol id="reflect"></ol>
       </section>
 
       <section>
@@ -61,16 +90,44 @@
       $("sub").textContent = p.population ? `${fmt(p.population)} residents` : "";
       $("print").addEventListener("click", () => print());
       $("back").href = `place.html?id=${p.id}`;
-      $("facts").innerHTML = [...p.findings.slice(0, 3), ...p.observations.map((c) => c.text)]
-        .map((t) => `<li>${esc(t)}</li>`).join("");
-      const name = p.short_name;
-      const qs = [
-        `When people in ${name} want to get involved, where do they usually start?`,
+      const name = p.short_name, t = p.totals;
+      const lines = '<div class="lines"></div><div class="lines"></div>';
+      const list = (el, items, withLines = true) => {
+        $(el).innerHTML = items.map((q) => `<li>${esc(q)}${withLines ? lines : ""}</li>`).join("");
+      };
+      // Step 1: guesses (answers appear in step 2)
+      const OPP = { membership: "membership", volunteer: "volunteering", events: "public events", take_action: "civic or political action" };
+      const top = Object.keys(OPP).sort((a, b) => t[b] - t[a])[0];
+      const guesses = [];
+      if (t.orgs > 0) guesses.push(`Out of every 10 nonprofit organizations in ${name}, how many list at least one way to get involved on their websites?`);
+      if (t.any_opp > 0) guesses.push("Which is most common here: membership, volunteering, public events, or civic and political action?");
+      guesses.push("Which kinds of organizations do you think offer the most ways to get involved here?");
+      list("guesses", guesses);
+      // Step 2: reveal
+      const reveal = [...p.findings];
+      if (t.orgs > 0) reveal.unshift(`Answer: about ${Math.round((t.any_opp / t.orgs) * 10)} in 10. Most common: ${OPP[top]}.`);
+      list("facts", reveal, false);
+      // Step 3: compare
+      const comp = p.observations.filter((c) => c.kind === "more" || c.kind === "fewer");
+      list("compare", comp.length ? comp.map((c) => c.text)
+        : ["The data doesn't show clear differences from similar places here, or there are too few organizations to compare."], false);
+      list("compare-q", [`Which places do people in ${name} compare themselves with? Do these differences match what you see?`]);
+      // Step 4: interpret
+      list("questions", [
         ...p.observations.map((c) => c.question),
         "Which kinds of organizations or gatherings matter here but would not show up in nonprofit records?",
+      ]);
+      // Step 5: shared meaning
+      list("shared", [
+        "Looking across what we've discussed, what do most of us agree is true about getting involved here?",
+        "Where do we see things differently, and why might that be?",
+      ]);
+      // Step 6: reflect
+      list("reflect", [
+        "What surprised you most today?",
+        "What would you want to find out next, and who could you ask?",
         "What would make it easier for more people here to take part?",
-      ];
-      $("questions").innerHTML = qs.map((q) => `<li>${esc(q)}<div class="lines"></div><div class="lines"></div></li>`).join("");
+      ]);
       const url = new URL(`place.html?id=${p.id}`, location.href).href;
       $("url").textContent = url;
       const drawQR = () => window.QRCode && new window.QRCode($("qr"), { text: url, width: 120, height: 120 });

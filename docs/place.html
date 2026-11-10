@@ -25,15 +25,26 @@
           <a class="btn" id="county-link"></a>
           <a class="btn" id="area-link">Add to an area</a>
         </div>
+        <ol class="path no-print" aria-label="How to use this page">
+          <li><a href="#h-find"><b>Look</b> at what exists here</a></li>
+          <li><a href="#h-peers"><b>Compare</b> with places like this one</a></li>
+          <li><a href="#h-obs"><b>Discuss</b> what it means</a></li>
+        </ol>
       </section>
 
       <section aria-labelledby="h-find">
+        <p class="eyebrow">Step 1 · Look</p>
         <h2 id="h-find">What we found</h2>
         <ul class="findings" id="findings"></ul>
       </section>
 
       <section aria-labelledby="h-grid">
         <h2 id="h-grid">Who provides what</h2>
+        <div class="guess panel no-print hidden" id="guess">
+          <b>Guess first.</b> <span id="guess-q"></span>
+          <div class="guess-options" id="guess-options"></div>
+          <p class="guess-result hidden" id="guess-result" aria-live="polite"></p>
+        </div>
         <p class="section-intro">How many organizations of each kind list each opportunity on their websites. <span id="grid-compare-note">Shading compares this place with 10 similar places, per resident.</span></p>
         <div class="toggle no-print" role="group" aria-label="Show">
           <button type="button" data-mode="n" aria-pressed="true">Number of organizations</button>
@@ -45,6 +56,7 @@
       </section>
 
       <section aria-labelledby="h-peers" id="peers-section">
+        <p class="eyebrow">Step 2 · Compare</p>
         <h2 id="h-peers">Compared with places like this one</h2>
         <p class="section-intro">The 10 places most similar in population size, rurality, poverty, education, broadband access, and demographics. Each dot is a place; the <b style="color:var(--dot-place)">blue dot</b> is this one. Rates are per 10,000 residents, smoothed so very small places don't swing to extremes.</p>
         <div class="panel"><div class="strips" id="strips"></div></div>
@@ -57,6 +69,7 @@
       </section>
 
       <section aria-labelledby="h-obs">
+        <p class="eyebrow">Step 3 · Discuss</p>
         <h2 id="h-obs">Things worth talking about</h2>
         <p class="section-intro">Observations from the data, each with how much weight it can bear and a question to discuss. They describe what organizations list online. They don't tell you what this community wants or why.</p>
         <div class="cards" id="cards"></div>

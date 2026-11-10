@@ -75,6 +75,10 @@ Organization records are de-identified. There are no names, EINs or street addre
 - Boundaries (pipeline only): U.S. Census Bureau [cartographic boundary files](https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html) for counties, states, and 2020 ZCTAs
 - QR codes: [qrcode.js](https://github.com/davidshimjs/qrcodejs) (MIT License)
 
+**Learning design**
+
+The place pages and conversation guides follow learning patterns (orientation, teaser and reveal, compare and contrast, interpret and evaluate, open-ended questions, shared meaning, reflection) from [Learning Patterns](https://learning-patterns.com/) by Tim Klapdor, licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). Pattern names are used with credit; we don't reproduce or adapt the pattern texts, which the license doesn't allow.
+
 ## Team
 
 - [Jae Yeon Kim](https://jaeyk.github.io/), University of North Carolina at Chapel Hill

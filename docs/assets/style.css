@@ -212,7 +212,7 @@ table.data tr:hover td { background: var(--accent-soft); }
 .stat b { display: block; font-size: 1.4rem; font-variant-numeric: tabular-nums; }
 .stat span { color: var(--ink-2); font-size: .88rem; }
 
-/* scatter */
+/* scatter (unused) */
 .scatter svg { width: 100%; height: auto; display: block; }
 .scatter .pt { fill: var(--dot-peer); fill-opacity: .55; }
 .scatter .pt.flag { fill: var(--fewer-2); fill-opacity: .9; }
@@ -260,3 +260,28 @@ dialog::backdrop { background: rgba(0, 0, 0, .35); }
 }
 .print-only { display: none; }
 .source { font-size: .85rem; margin: .6rem 0 0; }
+
+/* learning path, step labels, guess-first */
+.path { list-style: none; counter-reset: step; display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 1rem 0 0; }
+.path li { counter-increment: step; }
+.path a { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px 6px 6px; border-radius: 999px; background: var(--accent-soft); color: var(--ink); text-decoration: none; font-size: .92rem; }
+.path a::before { content: counter(step); display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--surface); font-size: .8rem; font-weight: 700; }
+.eyebrow { margin: 2.25rem 0 .25rem; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.eyebrow + h2 { margin-top: 0; }
+.guess { margin: 0 0 1rem; }
+.guess-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.guess-options .btn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.guess-result { margin: 10px 0 0; }
+
+/* state map */
+.map { padding: 8px; }
+.map svg { width: 100%; height: auto; display: block; }
+.map path.place { stroke: var(--surface); stroke-width: .6; cursor: pointer; }
+.map path.place:hover { stroke: var(--ink); stroke-width: 1.5; }
+.map path.dim { opacity: .25; }
+.map path.outline { fill: none; stroke: var(--ink-3); stroke-width: .8; pointer-events: none; }
+.f-more-2 { fill: var(--more-2); } .f-more-1 { fill: var(--more-1); } .f-same { fill: var(--same); }
+.f-fewer-1 { fill: var(--fewer-1); } .f-fewer-2 { fill: var(--fewer-2); } .f-none { fill: var(--surface-2); }
+.takeaway { font-size: 1.05rem; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius); padding: 12px 16px; }
+.takeaway:empty { display: none; }
+.controls .check { display: flex; flex-direction: row; align-items: center; gap: 8px; color: var(--ink); font-size: .92rem; }

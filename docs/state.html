@@ -17,9 +17,8 @@
         <label>State<select id="st"></select></label>
         <label>Show<select id="level"><option value="counties">Counties</option><option value="zips">ZIP codes</option></select></label>
         <label>Area type<select id="rural"><option value="">All</option><option>Metro</option><option>Small town</option><option>Rural</option></select></label>
-        <label>Less common than in similar places
-          <select id="below">
-            <option value="">Show all places</option>
+        <label>Color the map by
+          <select id="measure">
             <option value="vs_any">Any way to get involved</option>
             <option value="vs_membership">Membership</option>
             <option value="vs_volunteer">Volunteering</option>
@@ -27,16 +26,19 @@
             <option value="vs_take_action">Civic &amp; political action</option>
           </select></label>
         <label>Name contains<input type="text" id="name" placeholder="Filter by name"></label>
+        <label class="check"><input type="checkbox" id="only"> Only list places where this is less common than in similar places</label>
       </div>
     </section>
 
     <div class="stats" id="stats"></div>
 
-    <section aria-labelledby="h-scatter">
-      <h2 id="h-scatter">Opportunity and poverty</h2>
-      <p class="section-intro">Each dot is a place: across, the share of residents below 150% of the poverty line; up, organizations listing a way to get involved per 10,000 residents (smoothed). <span id="flag-note"></span></p>
-      <div class="panel scatter" id="scatter"></div>
-      <p class="source muted">Sources: Civic opportunity: <a href="https://doi.org/10.7910/DVN/IRCA7C">MapAgora</a> (Kim, de Vries &amp; Han 2025); population and community conditions: U.S. Census Bureau, American Community Survey 2017–2021. <a href="about.html#sources">All data sources</a></p>
+    <section aria-labelledby="h-map">
+      <h2 id="h-map">Map</h2>
+      <p class="section-intro">Each place is shaded by how many organizations list <b id="map-measure">a way to get involved</b> per resident, compared with the 10 places most similar to it. Tap or hover for details; click to open a place.</p>
+      <p class="takeaway" id="takeaway"></p>
+      <div class="panel map" id="map"><p class="loading">Loading map…</p></div>
+      <div class="legend" id="map-legend"></div>
+      <p class="source muted">Sources: Civic opportunity: <a href="https://doi.org/10.7910/DVN/IRCA7C">MapAgora</a> (Kim, de Vries &amp; Han 2025); population and community conditions: U.S. Census Bureau, American Community Survey 2017–2021; boundaries: U.S. Census Bureau cartographic boundary files. <a href="about.html#sources">All data sources</a></p>
     </section>
 
     <section aria-labelledby="h-table">
@@ -48,6 +50,7 @@
     </section>
   </main>
   <footer class="site-footer"></footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
   <script type="module" src="assets/state.js"></script>
 </body>
 </html>

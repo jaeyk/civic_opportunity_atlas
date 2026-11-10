@@ -37,6 +37,7 @@ async function main() {
   // findings
   $("findings").innerHTML = p.findings.map((f) => `<li>${esc(f)}</li>`).join("");
 
+  renderGuess(p, meta);
   renderGrid(p, meta, "n");
   document.querySelectorAll(".toggle button").forEach((b) => b.addEventListener("click", () => {
     document.querySelectorAll(".toggle button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
@@ -47,6 +48,38 @@ async function main() {
   renderCards(p);
   $("loading").classList.add("hidden");
   $("content").classList.remove("hidden");
+}
+
+// Learning pattern "teaser + reveal": guess before seeing the breakdown.
+// Nothing is stored or sent anywhere.
+function renderGuess(p, meta) {
+  const typed = meta.types.map((t, i) => [t, p.grid.n[i][0]])
+    .filter(([t, n]) => t !== "Type not identified" && n > 0)
+    .sort((a, b) => b[1] - a[1]);
+  const total = typed.reduce((s, [, n]) => s + n, 0);
+  if (typed.length < 3 || total < 5 || typed[0][1] === typed[1][1]) return;   // no clear answer
+  const answer = typed[0];
+  const lower = typed.slice(Math.ceil(typed.length / 2));
+  const options = [answer, typed[1], lower[Math.floor(lower.length / 2)] || typed[2]]
+    .filter((o, i, a) => a.indexOf(o) === i)
+    .sort((a, b) => a[0].localeCompare(b[0]));    // alphabetical: the order gives nothing away
+  const share = (n) => Math.round((n / total) * 100);
+  $("guess-q").textContent = `Which kind of organization do you think offers the most ways to get involved in ${p.short_name}?`;
+  $("guess-options").innerHTML = options.map(([t], i) => `<button type="button" class="btn" data-i="${i}">${esc(t)}</button>`).join("")
+    + `<button type="button" class="btn" data-i="skip">Just show me</button>`;
+  $("guess-options").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
+    $("guess-options").querySelectorAll("button").forEach((x) => { x.disabled = true; x.setAttribute("aria-pressed", String(x === b)); });
+    const pick = b.dataset.i === "skip" ? null : options[+b.dataset.i];
+    const fact = `${answer[0]} organizations: ${fmt(answer[1])} of the ${fmt(total)} offering opportunities that have an identified type (${share(answer[1])}%).`;
+    $("guess-result").innerHTML = !pick ? `It's ${esc(fact)}`
+      : pick === answer ? `<b>Yes.</b> ${esc(fact)}`
+      : `<b>Not quite.</b> It's ${esc(fact)} ${esc(pick[0])} organizations: ${fmt(pick[1])} (${share(pick[1])}%).`;
+    $("guess-result").innerHTML += ` <span class="muted">Is that what you expected? The full breakdown is below.</span>`;
+    $("guess-result").classList.remove("hidden");
+  });
+  $("guess").classList.remove("hidden");
 }
 
 function renderGrid(p, meta, mode) {

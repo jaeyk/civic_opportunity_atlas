@@ -5,7 +5,14 @@ audienceBanner(document.getElementById("for"));
 const $ = (s) => document.getElementById(s);
 
 const STATE_NAMES = { AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California", CO: "Colorado", CT: "Connecticut", DE: "Delaware", DC: "District of Columbia", FL: "Florida", GA: "Georgia", HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa", KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland", MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming" };
+const MEASURE_WORDS = { vs_any: "a way to get involved", vs_membership: "membership", vs_volunteer: "volunteering", vs_events: "public events", vs_take_action: "civic or political action" };
 const FEWER = 0.75;
+
+// Same bands as the place-page grid (assets/common.js compareClass) and pipeline/site_data.py
+const band = (r) => r == null ? ["none", "Too few to compare"]
+  : r >= 2 ? ["more-2", "Far more than similar places"] : r >= 1.33 ? ["more-1", "More than similar places"]
+  : r > 0.75 ? ["same", "About the same as similar places"] : r > 0.5 ? ["fewer-1", "Fewer than similar places"]
+  : ["fewer-2", "Far fewer than similar places"];
 
 const COLS = [
   { key: "label", label: "Place", fmt: (v, r) => `<a href="${placeURL(r.id)}">${esc(v)}</a>` },
@@ -23,93 +30,145 @@ const COLS = [
   { key: "rurality", label: "Area type", fmt: (v) => esc(v ?? "–") },
 ];
 
-let data = null, rows = [], sort = { key: "population", dir: -1 };
+let data = null, all = [], rows = [], sort = { key: "population", dir: -1 };
 
 async function init() {
   const meta = await getJSON("data/meta.json");
   const st = (param("st") || "NC").toUpperCase();
   $("st").innerHTML = meta.states.map((s) => `<option value="${s}"${s === st ? " selected" : ""}>${STATE_NAMES[s] || s}</option>`).join("");
   if (param("level") === "zips") $("level").value = "zips";
-  for (const k of ["rural", "below"]) if (param(k)) $(k).value = param(k);
-  for (const id of ["st", "level", "rural", "below"]) $(id).addEventListener("change", id === "st" ? load : update);
-  $("name").addEventListener("input", update);
+  if (param("rural")) $("rural").value = param("rural");
+  if (param("measure")) $("measure").value = param("measure");
+  if (param("below")) { $("measure").value = param("below"); $("only").checked = true; }   // older links
+  if (param("only") === "1") $("only").checked = true;
+  $("st").addEventListener("change", load);
+  $("level").addEventListener("change", () => { buildRows(); update(true); });
+  for (const id of ["rural", "measure", "only"]) $(id).addEventListener("change", () => update(id === "measure"));
+  $("name").addEventListener("input", () => update(false));
   $("csv").addEventListener("click", exportCSV);
+  addEventListener("resize", debounce(() => drawMap(), 200));
   await load();
 }
 
 async function load() {
-  const st = $("st").value;
-  const u = new URL(location.href); u.searchParams.set("st", st); history.replaceState(null, "", u);
-  data = await getState(st);
-  update();
+  data = await getState($("st").value);
+  buildRows();
+  update(true);
 }
 
-function currentRows(ignoreBelow = false) {
+function buildRows() {
   const level = $("level").value, cols = data.columns;
-  const all = data[level].map((a) => {
+  all = data[level].map((a) => {
     const r = Object.fromEntries(cols.map((c, i) => [c, a[i]]));
     r.label = level === "zips" ? `${r.name}${r.town ? " · " + r.town : ""}` : r.name;
     return r;
   });
-  const rural = $("rural").value, below = ignoreBelow ? "" : $("below").value, q = $("name").value.trim().toLowerCase();
-  return all.filter((r) => (!rural || r.rurality === rural)
-    && (!below || (r[below] != null && r[below] <= FEWER))
-    && (!q || r.label.toLowerCase().includes(q) || (r.county || "").toLowerCase().includes(q)));
 }
 
-function update() {
-  // keep filters in the URL so a view can be bookmarked or shared
+// Plain-language takeaway: highest- vs. lowest-poverty quarter of places
+function takeaway() {
+  const st = STATE_NAMES[$("st").value] || $("st").value;
+  const unit = $("level").value === "zips" ? "ZIP codes" : "counties";
+  const ok = all.filter((r) => r.POV150 != null && r.rate_any != null && r.population >= 100).sort((a, b) => a.POV150 - b.POV150);
+  if (ok.length < 12) return "";
+  const q = Math.floor(ok.length / 4);
+  const med = (xs) => { const v = xs.map((r) => r.rate_any).sort((a, b) => a - b); return v[Math.floor(v.length / 2)]; };
+  const low = med(ok.slice(0, q)), high = med(ok.slice(-q));
+  const r = high / low;
+  const how = r < 0.85 ? "fewer" : r > 1.15 ? "more" : "about as many";
+  return `In ${st}, the quarter of ${unit} with the most poverty have ${how} organizations listing a way to get involved per resident (typically ${fmt(high, 1)} per 10,000) than the quarter with the least poverty (${fmt(low, 1)}).`;
+}
+
+function filtered() {
+  const rural = $("rural").value, q = $("name").value.trim().toLowerCase();
+  return (r) => (!rural || r.rurality === rural) && (!q || r.label.toLowerCase().includes(q) || (r.county || "").toLowerCase().includes(q));
+}
+
+function update(redrawMap) {
   const u = new URL(location.href);
-  for (const k of ["level", "rural", "below"]) { const v = $(k).value; if (v && !(k === "level" && v === "counties")) u.searchParams.set(k, v); else u.searchParams.delete(k); }
+  u.searchParams.set("st", $("st").value);
+  for (const k of ["level", "rural", "measure"]) {
+    const v = $(k).value;
+    if (v && !(k === "level" && v === "counties") && !(k === "measure" && v === "vs_any")) u.searchParams.set(k, v); else u.searchParams.delete(k);
+  }
+  u.searchParams.delete("below");
+  if ($("only").checked) u.searchParams.set("only", "1"); else u.searchParams.delete("only");
   history.replaceState(null, "", u);
-  rows = currentRows();
-  const level = $("level").value;
-  const st = $("st").value;
-  const t = data.totals;
+
+  const keep = filtered(), m = $("measure").value;
+  rows = all.filter((r) => keep(r) && (!$("only").checked || (r[m] != null && r[m] <= FEWER)));
+  const st = $("st").value, t = data.totals;
   $("stats").innerHTML = [
     [fmt(data.population), `residents in ${STATE_NAMES[st] || st}`],
     [fmt(t.orgs), "nonprofit organizations"],
     [fmt(t.any_opp), "list a way to get involved"],
     [fmt((t.any_opp / data.population) * 10000, 1), "per 10,000 residents"],
   ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
-  const below = $("below");
-  $("flag-note").textContent = below.value
-    ? `Red dots: ${below.options[below.selectedIndex].text.toLowerCase()} less common than in similar places.` : "";
-  drawScatter(level, currentRows(true));
+  $("takeaway").textContent = takeaway();
+  $("map-measure").textContent = MEASURE_WORDS[m];
+  if (redrawMap) drawMap(); else restyleMap();
   drawTable();
 }
 
-function drawScatter(level, context) {
-  const pts = context.filter((r) => r.POV150 != null && r.rate_any != null);
-  // Size the drawing to the container so labels stay readable on phones
-  const W = Math.max(300, Math.min(900, $("scatter").clientWidth - 32 || 640));
-  const H = Math.round(Math.min(340, Math.max(240, W * 0.55))), L = 44, B = 34, T = 10, R = 12;
-  if (!pts.length) { $("scatter").innerHTML = `<p class="muted">No places to show with these filters.</p>`; return; }
-  const xs = pts.map((r) => r.POV150), ys = pts.map((r) => r.rate_any).sort((a, b) => a - b);
-  const xMax = Math.max(...xs) * 1.05, yMax = ys[Math.floor(ys.length * 0.98)] * 1.1 || 1;  // trim extreme outliers
-  const X = (v) => L + (v / xMax) * (W - L - R), Y = (v) => H - B - (Math.min(v, yMax) / yMax) * (H - B - T);
-  const below = $("below").value;
-  const ticks = (max, n) => Array.from({ length: n + 1 }, (_, i) => (max / n) * i);
-  const grid = ticks(yMax, 4).map((v) => `<line class="gridline" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${fmt(v, 0)}</text>`).join("")
-    + ticks(xMax, 4).map((v) => `<text x="${X(v)}" y="${H - B + 16}" text-anchor="middle">${fmt(v, 0)}%</text>`).join("");
-  const r = level === "zips" ? 3 : 4.5;
-  pts.sort((a, b) => (below && a[below] != null && a[below] <= FEWER) - (below && b[below] != null && b[below] <= FEWER));
-  const dots = pts.map((p) => {
-    const flag = below && p[below] != null && p[below] <= FEWER;
-    return `<circle class="pt${flag ? " flag" : ""}" cx="${X(p.POV150)}" cy="${Y(p.rate_any)}" r="${r}" data-id="${p.id}"
-      data-tip="${esc(p.label)}<br>${fmt(p.rate_any, 1)} per 10,000 · ${pct(p.POV150)} below 150% poverty"></circle>`;
-  }).join("");
-  $("scatter").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scatter plot of civic opportunity per resident against poverty">
-    ${grid}<text x="${(W + L) / 2}" y="${H - 2}" text-anchor="middle">Residents below 150% of poverty line</text>
-    <text transform="translate(12 ${(H - B) / 2}) rotate(-90)" text-anchor="middle">Per 10,000 residents</text>${dots}</svg>`;
-  $("scatter").querySelectorAll("circle").forEach((c) => {
-    c.addEventListener("mousemove", (e) => tip(c.dataset.tip, e));
-    c.addEventListener("mouseleave", () => tip(null));
-    c.addEventListener("click", () => { location.href = placeURL(c.dataset.id); });
-    c.style.cursor = "pointer";
+// ---- map --------------------------------------------------------------------------
+let shapes = { key: null, fc: null, outline: null };
+
+async function drawMap() {
+  const st = $("st").value, z = $("level").value === "zips";
+  const key = `${st}-${z ? "z" : "c"}`;
+  const box = $("map");
+  if (shapes.key !== key) {
+    box.innerHTML = `<p class="loading">Loading map…</p>`;
+    try {
+      shapes = { key, fc: await getJSON(`data/g/${key}.json`), outline: z ? await getJSON(`data/g/${st}-c.json`) : null };
+    } catch { box.innerHTML = `<p class="muted">Map not available for this state.</p>`; return; }
+  }
+  const d3 = window.d3;
+  const W = Math.max(300, box.clientWidth - 16);
+  // Center the projection on the state itself, so Alaska's Aleutians (past 180°) don't wrap around
+  const proj = d3.geoMercator().rotate([-d3.geoCentroid(shapes.fc)[0], 0]).fitWidth(W, shapes.fc);
+  const path = d3.geoPath(proj);
+  let [[, y0], [, y1]] = path.bounds(shapes.fc);
+  let H = Math.ceil(y1 - y0) + 4;
+  if (H > W * 0.75) {                       // tall states (e.g. Alaska): fit inside a capped box
+    H = Math.round(W * 0.75);
+    proj.fitSize([W, H], shapes.fc);
+  } else {
+    proj.translate([proj.translate()[0], proj.translate()[1] - y0 + 2]);
+  }
+  const byId = Object.fromEntries(all.map((r) => [r.id, r]));
+  const places = shapes.fc.features.map((f) => `<path class="place" data-id="${f.properties.id}" d="${path(f)}"></path>`).join("");
+  const outline = shapes.outline ? shapes.outline.features.map((f) => `<path class="outline" d="${path(f)}"></path>`).join("") : "";
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Map of ${esc(STATE_NAMES[st] || st)} ${z ? "ZIP codes" : "counties"}">${places}${outline}</svg>`;
+  box.querySelectorAll("path.place").forEach((el) => {
+    const r = byId[el.dataset.id];
+    el.addEventListener("mousemove", (e) => tip(tipHTML(r, el.dataset.id), e));
+    el.addEventListener("mouseleave", () => tip(null));
+    el.addEventListener("click", () => { location.href = placeURL(el.dataset.id); });
   });
+  restyleMap();
 }
 
+function tipHTML(r, id) {
+  if (!r) return "No data for this area";
+  const m = $("measure").value, [, words] = band(r[m]);
+  return `<b>${esc(r.label)}</b><br>${esc(MEASURE_WORDS[m][0].toUpperCase() + MEASURE_WORDS[m].slice(1))}: ${esc(words.toLowerCase())}${r[m] != null ? ` (${ratioText(r[m])})` : ""}<br>${fmt(r.any_opp)} of ${fmt(r.orgs)} organizations list a way to get involved`;
+}
+
+function restyleMap() {
+  const box = $("map"), m = $("measure").value, keep = filtered();
+  const byId = Object.fromEntries(all.map((r) => [r.id, r]));
+  box.querySelectorAll("path.place").forEach((el) => {
+    const r = byId[el.dataset.id];
+    const [cls] = band(r ? r[m] : null);
+    el.setAttribute("class", `place f-${cls}${r && !keep(r) ? " dim" : ""}`);
+  });
+  $("map-legend").innerHTML = ["fewer-2", "fewer-1", "same", "more-1", "more-2", "none"]
+    .map((c) => `<span><i class="c-${c}"></i>${{ "fewer-2": "Far fewer ▼▼", "fewer-1": "Fewer ▼", same: "About the same", "more-1": "More ▲", "more-2": "Far more ▲▲", none: "Too few to compare" }[c]}</span>`).join("")
+    + `<span class="muted">· compared with similar places</span>`;
+}
+
+// ---- table ------------------------------------------------------------------------
 function drawTable() {
   const { key, dir } = sort;
   rows.sort((a, b) => {
@@ -137,5 +196,7 @@ function exportCSV() {
     "pct_unemployed", "pct_minority", "pct_single_parent"];
   downloadCSV(`civic-opportunity-${$("st").value}-${$("level").value}.csv`, header, rows.map((r) => keys.map((k) => r[k])));
 }
+
+function debounce(fn, ms) { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; }
 
 init();

@@ -453,6 +453,54 @@ def state_totals(county_records: dict) -> dict:
     return out
 
 
+# ---- map shapes -------------------------------------------------------------------
+
+def _geojson(gdf, ids, decimals):
+    """Minimal GeoJSON: rounded coordinates, one property (place id)."""
+    import shapely
+    geoms = shapely.transform(gdf.geometry.values, lambda c: np.round(c, decimals))
+    feats = [{"type": "Feature", "properties": {"id": i}, "geometry": shapely.geometry.mapping(g)}
+             for i, g in zip(ids, geoms) if g is not None and not g.is_empty]
+    return {"type": "FeatureCollection", "features": feats}
+
+
+def _unwrap_alaska(gdf):
+    """Shift Aleutian longitudes east of 180 so Alaska draws as one piece."""
+    import shapely
+    def fix(c):
+        c = c.copy()
+        c[:, 0] = np.where(c[:, 0] > 0, c[:, 0] - 360, c[:, 0])
+        return c
+    gdf = gdf.copy()
+    gdf["geometry"] = shapely.transform(gdf.geometry.values, fix)
+    return gdf
+
+
+def write_shapes(records: dict):
+    """docs/data/g/{ST}-c.json (counties) and {ST}-z.json (ZIP codes) for the state maps."""
+    from . import sources
+    import warnings
+    warnings.filterwarnings("ignore")
+    state_of = {r["id"]: r["state"] for r in records.values()}
+    counties = sources.county_shapes()
+    counties["id"] = "c" + counties["FIPS"]
+    zctas = sources.zcta_shapes()
+    zctas["id"] = "z" + zctas["ZCTA"]
+    for gdf in (counties, zctas):
+        gdf["state"] = gdf["id"].map(state_of)
+    counties = counties[counties["state"].notna()]
+    zctas = zctas[zctas["state"].notna()]
+    for st in sorted(set(state_of.values())):
+        for code, gdf, tol, dec in (("c", counties, 0.004, 3), ("z", zctas, 0.0015, 4)):
+            g = gdf[gdf["state"] == st]
+            if g.empty:
+                continue
+            if st == "AK":
+                g = _unwrap_alaska(g)
+            g = g.assign(geometry=g.geometry.simplify(tol, preserve_topology=True))
+            write_json(DATA / "g" / f"{st}-{code}.json", _geojson(g, g["id"].tolist(), dec))
+
+
 def write_json(path, obj):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(obj, separators=(",", ":"), ensure_ascii=False))
@@ -488,6 +536,9 @@ def main():
             "state": st, "population": s["population"], "totals": s["totals"],
             "grid_n": s["grid_n"].tolist(), "columns": STATE_COLS,
             "counties": counties.get(st, []), "zips": zips.get(st, [])})
+
+    print("map shapes ...")
+    write_shapes(records)
 
     search = [[r["id"], r["name"], r["state"]] for r in records.values()]
     search.sort(key=lambda x: (x[0][0], x[1]))
