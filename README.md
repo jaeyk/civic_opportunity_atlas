@@ -1,4 +1,6 @@
-# MapAgora Community Tool
+# Civic Opportunity Atlas
+
+Live site: https://jaeyk.github.io/civic_opportunity_atlas/
 
 A static web tool, in development, for civic engagement that meets people where they are.
 

@@ -66,7 +66,7 @@ Planned features:
 - `pipeline/site_data.py` writes one JSON per place plus state files and a search index into `docs/data/`. All generated sentences (findings, observation cards, questions) are written there, and `tests/test_site_data.py` checks them for forbidden claims. Change wording in Python, not in JS.
 - The shading rule (`compareClass` in `docs/assets/common.js`) mirrors `MIN_COUNT` and the ratio bands in `site_data.py`; keep them in sync.
 - `docs/data/` is committed (Pages needs it): about 146 MB raw, so every data rebuild adds history. Rebuild only when data or text rules change.
-- The site name "Civic Opportunity Atlas" is a placeholder until the user picks one.
+- Site name: "Civic Opportunity Atlas" (confirmed; the repo is named after it).
 
 ## Data
 
@@ -82,4 +82,6 @@ Planned features:
 
 ## Deployment
 
-The new tool will be served by GitHub Pages from a static build. The old Quarto site was retired, and Pages needs re-enabling once the new build exists. There is no GitHub Actions workflow: the user chose not to use Actions for deployment.
+- Repo: https://github.com/jaeyk/civic_opportunity_atlas (renamed from `agora_teaching_tool`; the user's personal account, not the snfagora org).
+- Site: https://jaeyk.github.io/civic_opportunity_atlas/, served by GitHub Pages from `docs/` on `main`. There is no GitHub Actions workflow (user decision).
+- https://snfagora.github.io/agora_dashboard/ is a DIFFERENT repo (snfagora org, SAML-protected). This repo does not deploy it.
