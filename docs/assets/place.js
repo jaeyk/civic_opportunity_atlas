@@ -3,11 +3,10 @@ import { chrome, attachSearch, placeURL, getPlace, getJSON, param, fmt, pct, esc
 chrome("");
 attachSearch(document.getElementById("q"), (r) => { location.href = placeURL(r.id); });
 
-const id = param("id");
+const id = param("id") || "c06001";   // default: Alameda County, CA
 const $ = (s) => document.getElementById(s);
 
 async function main() {
-  if (!id) { location.href = "index.html"; return; }
   let p, meta;
   try {
     [p, meta] = await Promise.all([getPlace(id), getJSON("data/meta.json")]);

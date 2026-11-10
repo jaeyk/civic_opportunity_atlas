@@ -43,7 +43,7 @@ let data = null, all = [], rows = [], sort = { key: "population", dir: -1 };
 
 async function init() {
   const meta = await getJSON("data/meta.json");
-  const st = (param("st") || "NC").toUpperCase();
+  const st = (param("st") || "CA").toUpperCase();   // default: California
   $("st").innerHTML = meta.states.map((s) => `<option value="${s}"${s === st ? " selected" : ""}>${STATE_NAMES[s] || s}</option>`).join("");
   if (param("level") === "zips") $("level").value = "zips";
   if (param("rural")) $("rural").value = param("rural");

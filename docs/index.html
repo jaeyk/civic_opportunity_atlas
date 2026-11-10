@@ -16,7 +16,7 @@
       <p class="lede">For any U.S. county or ZIP code: what kinds of civic opportunity exist, how much of each, and which kinds of organizations offer them, compared with places like it.</p>
       <div class="search">
         <label for="q" class="muted" style="display:block;margin-bottom:6px">Enter a ZIP code, town, or county</label>
-        <input id="q" type="search" autocomplete="off" placeholder="e.g. 27514, Chapel Hill, or Durham County">
+        <input id="q" type="search" autocomplete="off" placeholder="e.g. 94612, Oakland, or Alameda County">
       </div>
     </section>
 
@@ -87,7 +87,7 @@
     document.getElementById("door-organizer").addEventListener("click", (e) => {
       e.preventDefault(); q.focus(); q.scrollIntoView({ behavior: "smooth", block: "center" });
     });
-    getPlace("c37135").then((p) => {
+    getPlace("c06001").then((p) => {
       const f = p.findings;
       document.getElementById("example-text").innerHTML =
         `${f[0]} ${f[2] || ""} <a href="place.html?id=${p.id}">See the full profile for ${p.name} →</a>`;
