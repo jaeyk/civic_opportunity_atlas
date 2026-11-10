@@ -55,4 +55,9 @@ Organization records are de-identified. There are no names, EINs or street addre
 
 ## Team
 
-[Jae Yeon Kim](https://jaeyk.github.io/) & [Milan de Vries](https://snfagora.jhu.edu/person/milan-de-vries/)
+- [Jae Yeon Kim](https://jaeyk.github.io/), University of North Carolina at Chapel Hill
+- [Milan de Vries](https://snfagora.jhu.edu/person/milan-de-vries/), SNF Agora Institute, Johns Hopkins University
+
+## Contact
+
+Jae Yeon Kim, [jaekim@unc.edu](mailto:jaekim@unc.edu)
